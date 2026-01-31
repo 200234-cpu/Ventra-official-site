@@ -1,688 +1,338 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>VentraOS — Full Ecosystem</title>
-
-  <!--
-    Remade single-file site:
-    - Liquid/glass visual style inspired by the provided ColdOS screenshots
-    - Pages: Home, Experients (Experiences), Subscriptions, Download, About, Auth, Experience Dev (chat + editor)
-    - Region restriction for Experients (US / UA / PL)
-    - Local auth + admin account (Artem / 2015) stored client-side for demo only
-    Notes: For production move user data/auth to a server.
-  -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VentraOS</title>
 
   <style>
-    /* ---------- Palette & base ---------- */
-    :root{
-      --bg-outer: #eef5f8;
-      --hero-start: #c7ddeb;
-      --hero-end: #b9d0dc;
-      --glass: rgba(255,255,255,0.72);
-      --glass-2: rgba(255,255,255,0.9);
-      --muted: #6f7b86;
-      --text: #0d1b2a;
-      --accent: #77a0bd;
-      --accent-2: #5f8fae;
-      --radius: 18px;
-      --shadow: 0 8px 20px rgba(15,23,42,0.08);
-      --shadow-strong: 0 18px 48px rgba(15,23,42,0.12);
-      --nav-height: 72px;
-      font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, Arial, sans-serif;
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100..1000&display=swap');
+    
+    @font-face {
+      font-family: 'Geist';
+      src: url('https://assets.codepen.io/165585/Geist-Medium.woff2') format('woff2');
+      font-display: swap;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      background:var(--bg-outer);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+    :root {
+      --c-glass: #bbbbbc;
+      --c-light: #fff;
+      --c-dark: #000;
+      --c-content: #224;
+      --c-action: #0052f5;
+      --c-bg: #E8E8E9;
+      --glass-reflex-dark: 1;
+      --glass-reflex-light: 1;
+      --saturation: 150%;
     }
 
-    a{color:inherit;text-decoration:none}
-    button{font-family:inherit}
-
-    /* ---------- Header / nav (ColdOS-like) ---------- */
-    header{
-      position:fixed;
-      left:0;right:0;top:0;
-      height:var(--nav-height);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:12px 34px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.86));
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      z-index:1000;
-      backdrop-filter: blur(6px) saturate(120%);
+    /* THEMES */
+    body:has(input[value="dark"]:checked) {
+      --c-bg: #1b1b1d; --c-content: #e1e1e1; --c-action: #03d5ff;
+    }
+    body:has(input[value="dim"]:checked) {
+      --c-bg: #152433; --c-content: #d5dbe2; --c-action: #ff48a9;
     }
 
-    .brand{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      cursor:pointer;
-    }
-    .brand .logo {
-      width:38px;height:38px;border-radius:10px;
-      display:grid;place-items:center;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      color:white;font-weight:800;
-      box-shadow:0 6px 18px rgba(95,143,174,0.14)
-    }
-    .brand .title { font-weight:800; font-size:18px }
-
-    nav.nav {
-      display:flex;
-      gap:20px;
-      align-items:center;
+    body {
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background: var(--c-bg);
+      color: var(--c-content);
+      transition: background 400ms cubic-bezier(1, 0, 0.4, 1);
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding-bottom: 150px;
     }
 
-    .nav a, .nav button.navlink {
-      padding:10px 18px;border-radius:12px;
-      color:var(--text); background:transparent; border:0; cursor:pointer;
-    }
-    .nav a.active, .nav button.navlink.active {
-      background:var(--glass);
-      box-shadow:var(--shadow);
-    }
-
-    .download-btn{
-      padding:8px 18px;border-radius:16px;background: linear-gradient(180deg,var(--accent),var(--accent-2));color:white;border:0;cursor:pointer;
-      box-shadow:0 10px 24px rgba(95,143,174,0.18);
+    /* LIQUID GLASS EFFECTS */
+    .liquidGlass-wrapper {
+      position: relative; overflow: hidden;
+      box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(8px) url(#liquid-glass);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2);
     }
 
-    /* ---------- Page layout ---------- */
-    main.page { display:none; min-height:calc(100vh - var(--nav-height)); padding-top:var(--nav-height); }
-    main.page.active { display:block; animation:fadeIn .42s ease; }
-    @keyframes fadeIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
-
-    /* ---------- Hero (ColdOS-like) ---------- */
-    .hero {
-      height:420px;
-      background: linear-gradient(135deg,var(--hero-start),var(--hero-end));
-      display:flex;
-      align-items:flex-start;
-      padding:60px 8%;
-      color:#fff;
-      position:relative;
-      overflow:hidden;
+    /* SWITCHER */
+    .switcher {
+      position: fixed; top: 40px; z-index: 100;
+      display: flex; gap: 8px; width: 244px; padding: 8px;
+      border-radius: 99em; background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
     }
-    .hero .hero-left { max-width:680px }
-    .hero h1 { font-size:64px; margin:6px 0; font-weight:800; letter-spacing:-1px; }
-    .hero p.lead { margin:12px 0 22px; color:rgba(255,255,255,0.9); font-size:16px; line-height:1.6 }
-    .hero .cta { padding:12px 22px;border-radius:999px;background:rgba(255,255,255,0.95); color:var(--accent-2); font-weight:700; border:0; cursor:pointer; }
+    .switcher__option { flex: 1; text-align: center; cursor: pointer; font-size: 12px; font-weight: bold; z-index: 5; }
+    .switcher input { display: none; }
 
-    /* soft blur shapes for hero (decor) */
-    .hero::after{
-      content:""; position:absolute;
-      right:-10%; top:-10%; width:60%; height:120%;
-      background: radial-gradient(closest-side, rgba(255,255,255,0.14), transparent 40%);
-      transform:rotate(8deg); pointer-events:none;
+    /* YOUR GEIST BUTTON */
+    .geist-btn {
+      appearance: none; border: none; cursor: pointer;
+      background-image: linear-gradient(to bottom right, #3FFC6A, #591B98, #432366);
+      font: 16px/24px 'Geist'; color: white;
+      padding: 10px 24px; border-radius: 10px;
+      box-shadow: 0px 4px 12px -3px rgba(9, 24, 85, 0.95);
+      position: relative; transition: 0.2s;
+    }
+    .geist-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+    /* CCODE WINDOW */
+    .ccode-win {
+      margin-top: 140px; width: 90%; max-width: 900px;
+      border-radius: 2rem; padding: 2rem;
+      background: rgba(255,255,255,0.05);
+    }
+    .editor {
+      width: 100%; height: 350px; background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem;
+      color: #3FFC6A; padding: 20px; font-family: 'Geist', monospace;
     }
 
-    /* ---------- Tiles (cards) ---------- */
-    .section { padding:36px 8% 56px; }
-    .cards { display:flex; gap:18px; flex-wrap:wrap; align-items:stretch }
-    .card {
-      background:var(--glass);
-      border-radius:20px;
-      padding:18px;
-      box-shadow:var(--shadow);
-      border:1px solid rgba(255,255,255,0.8);
-      min-width:220px;
-      flex:1 1 220px;
+    /* DOCK */
+    .dock {
+      position: fixed; bottom: 30px; display: flex; gap: 15px;
+      padding: 12px 25px; border-radius: 2rem;
     }
-    .card h3 { margin:0 0 8px; color:var(--accent-2) }
-    .card p { margin:0; color:var(--muted); font-size:14px }
-
-    /* ---------- Experiences grid ---------- */
-    .experiences-grid {
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap:24px;
-      padding:28px 8% 48px;
+    .icon {
+      width: 55px; height: 55px; background: white; border-radius: 1.2rem;
+      display: grid; place-items: center; cursor: pointer;
+      transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
     }
-    .exp-card {
-      background:var(--glass);
-      border-radius:20px;
-      padding:22px;
-      border:1px solid rgba(255,255,255,0.9);
-      box-shadow:var(--shadow);
-      display:flex;flex-direction:column;
+    .icon:hover { scale: 1.3; transform: translateY(-15px); }
+
+    /* COLDOS SECTIONS */
+    .ventraos-section {
+      margin-top: 40px;
+      width: 90%;
+      max-width: 900px;
+      border-radius: 2rem;
+      padding: 2rem;
+      background: rgba(255,255,255,0.05);
     }
-    .exp-card .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,0.6); color:var(--accent-2); font-weight:800; font-size:12px }
-    .exp-card .release { margin-top:auto; font-weight:700; color:var(--accent-2) }
 
-    /* ---------- Subscription grid ---------- */
-    .subscription-grid {
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap:20px;
-      padding:28px 8% 48px;
+    .ventraos-section h1 {
+      font-family: 'Geist';
+      margin-top: 0;
+      color: var(--c-action);
     }
-    .sub-card {
-      background:var(--glass);
-      border-radius:20px;
-      padding:20px;
-      box-shadow:var(--shadow);
-      border:1px solid rgba(255,255,255,0.9);
-      position:relative;
+
+    .ventraos-section h2, .ventraos-section h3 {
+      font-family: 'Geist';
+      color: var(--c-action);
     }
-    .sub-card.featured { transform:scale(1.03); box-shadow:var(--shadow-strong) }
 
-    /* ---------- Dev / chat / editor ---------- */
-    .dev-wrap { padding:28px 8% 56px; display:grid; gap:20px }
-    .chat-box{ background:var(--glass); border-radius:16px; padding:14px; box-shadow:var(--shadow); min-height:220px; display:flex; flex-direction:column }
-    .chat-messages{ flex:1; overflow:auto; display:flex;flex-direction:column; gap:10px; padding:6px }
-    .msg { padding:10px 12px; border-radius:12px; max-width:78%; word-break:break-word }
-    .msg.bot { background:rgba(255,255,255,0.95); color:var(--text); align-self:flex-start; border-left:4px solid var(--accent) }
-    .msg.user { background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff; align-self:flex-end }
-    .chat-input-row { display:flex; gap:10px; margin-top:10px }
-    .chat-input { flex:1; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.06); background:#fff }
+    .ventraos-section ul {
+      padding-left: 20px;
+    }
 
-    .editor { display:grid; grid-template-columns:1fr 280px; gap:16px; margin-top:10px }
-    textarea.editor-area { width:100%; min-height:360px; padding:16px; border-radius:12px; border:1px solid rgba(0,0,0,0.06); font-family:monospace; font-size:13px; background:white; box-shadow:inset 0 2px 10px rgba(0,0,0,0.04) }
-    .file-list { background:var(--glass); padding:12px; border-radius:12px; box-shadow:var(--shadow) }
+    .ventraos-section li {
+      margin-bottom: 10px;
+    }
 
-    /* ---------- Auth modal & questionnaire ---------- */
-    .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.45); z-index:2000 }
-    .modal.active { display:flex }
-    .modal-card { background:var(--glass-2); border-radius:14px; padding:22px; width:420px; box-shadow:var(--shadow-strong); border:1px solid rgba(255,255,255,0.9) }
-    .form-row { margin-bottom:12px }
-    .form-row label{ display:block; color:var(--muted); margin-bottom:6px; font-weight:700 }
-    .form-row input, .form-row select { width:100%; padding:10px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:white }
+    .download-btn {
+      display: inline-block;
+      background-color: var(--c-action);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 10px;
+      transition: transform 0.2s;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-    /* ---------- footer ---------- */
-    footer.sitefoot { padding:28px 8%; text-align:center; color:var(--muted) }
+    .download-btn:hover {
+      transform: none;
+      filter: none;
+    }
 
-    /* small screens */
-    @media (max-width:880px){
-      .hero h1{ font-size:44px }
-      header{padding:10px 18px}
-      .hero{padding:34px 6%}
-      .editor{grid-template-columns:1fr}
+    .copyright {
+      margin-top: 40px;
+      font-size: 12px;
+      opacity: 0.7;
+      text-align: center;
+    }
+
+    .release-date {
+      margin-top: 20px;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      font-size: 14px;
+      color: #3FFC6A;
+      font-family: 'Geist', monospace;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="brand" onclick="openPage('home')">
-      <div class="logo">V</div>
-      <div class="title">VentraOS</div>
-    </div>
+  <div class="switcher liquidGlass-wrapper">
+    <label class="switcher__option"><input type="radio" name="t" value="light" checked> LIGHT</label>
+    <label class="switcher__option"><input type="radio" name="t" value="dark"> DARK</label>
+    <label class="switcher__option"><input type="radio" name="t" value="dim"> DIM</label>
+  </div>
 
-    <nav class="nav" aria-label="Main">
-      <button class="navlink active" id="btn-home" onclick="openPage('home')">Головна</button>
-      <button class="navlink" id="btn-exp" onclick="openPage('experiences')">Приклади</button>
-      <button class="navlink" id="btn-subs" onclick="openPage('subscriptions')">Підписка</button>
-      <button class="navlink" id="btn-download" onclick="openPage('download')">Завантаження</button>
-      <button class="navlink" id="btn-about" onclick="openPage('about')">About</button>
-      <button class="download-btn" id="btn-auth" onclick="openPage('auth')">Увійти</button>
-    </nav>
-  </header>
+  <!-- CCODE WINDOW -->
+  <div class="ccode-win liquidGlass-wrapper">
+    <h1 style="font-family: 'Geist'; margin-bottom: 5px;">CCode IDE</h1>
+    <p style="font-size: 14px; opacity: 0.7; margin-bottom: 20px;">The official environment for Cyc language.</p>
+    
+    <textarea class="editor" spellcheck="false">
+import Ventra
+import UI
 
-  <!-- HOME -->
-  <main class="page active" id="page-home">
-    <section class="hero">
-      <div class="hero-left">
-        <h1>VentraOS</h1>
-        <p class="lead">Modern WebOS-styled operating system — красивий інтерфейс, зручні інструменти і інтегровані експерименти.</p>
-        <button class="cta" onclick="openPage('download')">Завантажити</button>
-      </div>
-    </section>
+start() {
+  UI.createGlassWindow("Main", liquid: true)
+  print("VentraOS initialized with Geist font")
+}
+    </textarea>
 
-    <section class="section">
-      <h2 class="sectionTitle">Можливості VentraOS</h2>
-      <div class="cards" style="margin-top:18px">
-        <div class="card"><h3>VentraUI</h3><p>Сучасний дизайн з великою кількістю опцій тем і компонентів.</p></div>
-        <div class="card"><h3>VentraAI</h3><p>Інтелектуальні функції і ассистент для користувача.</p></div>
-        <div class="card"><h3>CCode</h3><p>Вбудована IDE з редактором та запуском коду у браўзері.</p></div>
-        <div class="card"><h3>Ventra Browser</h3><p>Легкий браузер в складі системи.</p></div>
-      </div>
-    </section>
-    <footer class="sitefoot">© <span id="year">2026</span> VentraOS • Ventra Tech</footer>
-  </main>
-
-  <!-- EXPERIENCES -->
-  <main class="page" id="page-experiences">
-    <div style="padding-top:24px">
-      <h2 class="sectionTitle" style="padding-top:10px">Experients</h2>
-      <p style="text-align:center;color:var(--muted);margin-top:8px">Всі Experients доступні тільки в США, Україні та Польщі</p>
-    </div>
-
-    <section class="experiences-grid" id="experiments-list">
-      <div class="exp-card">
-        <div class="badge">EXPERIMENTAL</div>
-        <h3>VentraAI</h3>
-        <p>Розумний асистент і набір AI-функцій інтегрованих в систему.</p>
-        <p class="exp-release">📅 Full release: 27.03.2026</p>
-        <div style="margin-top:14px">
-          <button class="exp-btn" onclick="openExp('ventrai')">Learn more</button>
-        </div>
-      </div>
-
-      <div class="exp-card">
-        <div class="badge">EXPERIMENTAL</div>
-        <h3>CCode</h3>
-        <p>Вбудована IDE з редактором, запуском та збереженням проєктів.</p>
-        <p class="exp-release">📅 Full release: 31.05.2026 at 16:00</p>
-        <div style="margin-top:14px">
-          <button class="exp-btn" onclick="openExp('ccode')">Learn more</button>
-        </div>
-      </div>
-    </section>
-
-    <footer class="sitefoot">© <span id="year2">2026</span> VentraOS • Ventra Tech</footer>
-  </main>
-
-  <!-- SUBSCRIPTIONS -->
-  <main class="page" id="page-subscriptions">
-    <h2 class="sectionTitle" style="padding-top:24px">Підписки</h2>
-    <section class="subscription-grid">
-      <div class="sub-card">
-        <h3>FREE</h3>
-        <div style="font-weight:900;font-size:22px;margin:8px 0">$0 <small style="font-weight:400">/ місяць</small></div>
-        <p style="color:var(--muted)">Доступ через анкету.</p>
-        <ul class="sub-features">
-          <li>Базовий доступ</li>
-          <li>1 проєкт у CCode</li>
-        </ul>
-        <button class="sub-btn secondary" onclick="openQuestionnaire()">Пройти анкету</button>
-      </div>
-
-      <div class="sub-card featured">
-        <div style="position:absolute;top:-12px;right:14px;background:var(--accent);color:#fff;padding:6px 10px;border-radius:12px;font-weight:800">ПОПУЛЯРНО</div>
-        <h3>PRO</h3>
-        <div style="font-weight:900;font-size:22px;margin:8px 0">$9.99</div>
-        <p style="color:var(--muted)">Для розробників та ентузіастів.</p>
-        <ul class="sub-features">
-          <li>5 проєктів у CCode</li>
-          <li>100GB сховища</li>
-        </ul>
-        <button class="sub-btn primary" onclick="choosePlan('PRO')">Вибрати PRO</button>
-      </div>
-
-      <div class="sub-card">
-        <h3>ULTRA</h3>
-        <div style="font-weight:900;font-size:22px;margin:8px 0">$19.99</div>
-        <p style="color:var(--muted)">Все для професіоналів.</p>
-        <ul class="sub-features">
-          <li>Необмежені проєкти</li>
-          <li>1TB сховища</li>
-        </ul>
-        <button class="sub-btn primary" onclick="choosePlan('ULTRA')">Вибрати ULTRA</button>
-      </div>
-    </section>
-    <footer class="sitefoot">© <span id="year3">2026</span> VentraOS • Ventra Tech</footer>
-  </main>
-
-  <!-- EXPERIENCE DEVELOPER (chat + editor) -->
-  <main class="page" id="page-exp-dev">
-    <div style="padding:18px 8% 0">
-      <button onclick="openPage('experiences')" style="border:0;background:transparent;color:var(--muted);cursor:pointer;margin-bottom:8px">← Повернутися</button>
-      <h2 class="sectionTitle" id="expDevTitle">Experience</h2>
-    </div>
-
-    <div class="dev-wrap">
-      <div style="display:flex;gap:20px;flex-direction:column">
-        <div class="chat-box" aria-live="polite">
-          <div class="chat-messages" id="chatMessages">
-            <div class="msg bot">Привіт! Я бот допомоги. Задайте питання про досвід або CCode.</div>
-          </div>
-
-          <div class="chat-input-row">
-            <input id="chatInput" class="chat-input" placeholder="Напишіть повідомлення..." onkeydown="if(event.key==='Enter') sendMessage()">
-            <button class="download-btn" onclick="sendMessage()">Відправити</button>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:14px;align-items:center">
-          <button class="navlink" onclick="saveDev()">Зберегти</button>
-          <button class="navlink" onclick="runDev()">Запустити</button>
-          <div id="devStatus" style="color:var(--muted)"></div>
-        </div>
-      </div>
-
-      <div class="editor" style="margin-top:6px">
-        <textarea id="devEditor" class="editor-area" spellcheck="false">// Ваш код тут
-console.log('Hello Ventra');</textarea>
-
-        <div class="file-list">
-          <strong>Файли</strong>
-          <div style="margin-top:10px">
-            <div style="cursor:pointer;padding:8px;border-radius:8px" onclick="loadDevFile('main')">main.ventra</div>
-            <div style="cursor:pointer;padding:8px;border-radius:8px" onclick="loadDevFile('ui')">ui.ventra</div>
-            <div style="cursor:pointer;padding:8px;border-radius:8px" onclick="loadDevFile('logic')">logic.ventra</div>
-          </div>
-          <div style="margin-top:14px;color:var(--muted)"><strong>Output</strong><div id="devOutput" style="margin-top:8px">Ready</div></div>
-        </div>
-      </div>
-    </div>
-
-    <footer class="sitefoot">© <span id="year4">2026</span> VentraOS • Ventra Tech</footer>
-  </main>
-
-  <!-- AUTH -->
-  <main class="page" id="page-auth">
-    <div style="padding:28px 8%">
-      <div class="modal-card" style="max-width:520px;margin:40px auto">
-        <h3 id="authHeader">Авторизація</h3>
-
-        <div class="form-row">
-          <label>Логін</label>
-          <input id="loginUser" placeholder="ім'я користувача" autocomplete="off">
-        </div>
-
-        <div class="form-row">
-          <label>Пароль</label>
-          <input id="loginPass" type="password" placeholder="пароль" autocomplete="off">
-        </div>
-
-        <div style="display:flex;gap:10px">
-          <button class="download-btn" onclick="submitAuth()">Продовжити</button>
-          <button class="navlink" onclick="toggleRegister()">Реєстрація</button>
-        </div>
-
-        <div id="regionWarn" class="region-warning" style="margin-top:12px"></div>
-      </div>
-    </div>
-    <footer class="sitefoot">© <span id="year5">2026</span> VentraOS • Ventra Tech</footer>
-  </main>
-
-  <!-- DOWNLOAD -->
-  <main class="page" id="page-download">
-    <div style="padding:24px 8%">
-      <h2 class="sectionTitle">Завантаження</h2>
-      <div class="releaseBox" style="margin-top:18px;padding:20px;border-radius:12px;background:var(--glass);border:1px solid rgba(255,255,255,0.9)">
-        <div class="releaseBadge">Очікується реліз</div>
-        <h3 style="margin:6px 0">Not available — please wait</h3>
-        <p style="color:var(--muted)">Release in 05.02.2026</p>
-      </div>
-    </div>
-  </main>
-
-  <!-- ABOUT -->
-  <main class="page" id="page-about">
-    <div style="padding:36px 8%">
-      <h2 class="sectionTitle">Про нас</h2>
-      <div class="aboutCard" style="margin-top:18px">
-        <h3>Ventra Tech</h3>
-        <p style="color:var(--muted)">Студія, що створює сучасні цифрові продукти. Цей демо-сайт містить локальну демонстрацію експериментальних функцій.</p>
-      </div>
-    </div>
-  </main>
-
-  <!-- Questionnaire Modal (for FREE access) -->
-  <div id="questionModal" class="modal" aria-hidden="true">
-    <div class="modal-card">
-      <h3>Анкета для FREE</h3>
-      <div class="form-row">
-        <label>Ім'я</label><input id="qName">
-      </div>
-      <div class="form-row">
-        <label>Email</label><input id="qEmail" type="email">
-      </div>
-      <div class="form-row">
-        <label>Країна</label>
-        <select id="qCountry">
-          <option value="">Виберіть</option>
-          <option value="US">США</option>
-          <option value="UA">Україна</option>
-          <option value="PL">Польща</option>
-        </select>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <button class="download-btn" onclick="submitQuestion()">Отримати доступ</button>
-        <button class="navlink" onclick="closeQuestion()">Скасувати</button>
-      </div>
+    <div style="margin-top: 20px; display: flex; gap: 15px;">
+      <button class="geist-btn"><span>RUN APP</span></button>
+      <button class="geist-btn" style="background-image: linear-gradient(to bottom right, #57C3F9, #591B98);"><span>SAVE</span></button>
     </div>
   </div>
 
-  <script>
-    // ---------- Basic init ----------
-    const YEARS = new Date().getFullYear();
-    ['year','year2','year3','year4','year5'].forEach(id=>{
-      const el = document.getElementById(id); if(el) el.textContent = YEARS;
-    });
+  <!-- VENTRAOS APPS SECTION -->
+  <div class="ventraos-section liquidGlass-wrapper">
+    <h1>VentraOS</h1>
+    <p>Расширите ваши возможности с помощью приложений для VentraOS.</p>
+    <span class="download-btn">Download is currently not available</span>
+    
+    <hr style="margin: 30px 0; border: 1px solid rgba(255,255,255,0.1);">
+    
+    <h2>Приложения</h2>
+    
+    <h3>Gemini PP</h3>
+    <p>от Google LLC.</p>
+    <span class="download-btn">Download is currently not available</span>
+    
+    <h3>Zapret Discord и Youtube PP</h3>
+    <p>от VentraTech</p>
+    <span class="download-btn">Download is currently not available</span>
+    
+    <h3>Maincraft PP</h3>
+    <p>от VentraTech</p>
+    <span class="download-btn">Download is currently not available</span>
+    
+    <div class="copyright">
+      © VentraTech — VentraOS создан в WebOS (HTML, CSS, JS, PHP)
+    </div>
+  </div>
 
-    // ---------- Local demo user store (client-side only) ----------
-    // NOTE: THIS IS A DEMO: DO NOT USE CLIENT-SIDE AUTH IN PRODUCTION.
-    const STORAGE_KEY = 'ventra_users_demo_v1';
-    let users = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  <!-- VENTRAOS UTILITIES SECTION -->
+  <div class="ventraos-section liquidGlass-wrapper">
+    <h1>VentraOS</h1>
+    <p>Утилиты для операционной системы VentraOS.</p>
+    <span class="download-btn">Download is currently not available</span>
+    
+    <hr style="margin: 30px 0; border: 1px solid rgba(255,255,255,0.1);">
+    
+    <h2>Утилиты</h2>
+    
+    <h3>CCode 7-X</h3>
+    <p>Создание приложения для VentraOS 7 и выше. Приложение для Windows</p>
+    <span class="download-btn">Download is currently not available</span>
+    
+    <h3>CCode 2-6</h3>
+    <p>Создание приложения для VentraOS 2-6. Приложение для Windows PowerPoint</p>
+    <span class="download-btn">Download is currently not available</span>
+    
+    <div class="release-date">
+      <strong>CCode - full release in 31.02.2026</strong>
+    </div>
+    
+    <div class="copyright">
+      © VentraTech — VentraOS создан в WebOS (HTML, CSS, JS, PHP)
+    </div>
+  </div>
 
-    // Preload an admin account if not present (as requested).
-    if(!users['Artem']) {
-      users['Artem'] = { password: '2015', subscription: 'ULTRA', country: 'UA', files: {} };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-    }
+  <!-- VENTRAOS SYSTEM REQUIREMENTS -->
+  <div class="ventraos-section liquidGlass-wrapper">
+    <h1>VentraOS</h1>
+    <p>Узнайте, что необходимо для запуска VentraOS на вашем устройстве.</p>
+    <span class="download-btn">Download is currently not available</span>
+    
+    <hr style="margin: 30px 0; border: 1px solid rgba(255,255,255,0.1);">
+    
+    <h2>Системные требования</h2>
+    
+    <h3>Рекомендуем выбрать</h3>
+    <ul>
+      <li>ОС для запуска: Windows 11 25H2 и выше.</li>
+      <li>Браузер: Google Chrome.</li>
+      <li>Веб-камера: Для работы приложения "Камера" в VentraOS.</li>
+      <li>Процессор с поддержкой VentraAI.</li>
+    </ul>
+    
+    <h3>Минимальные системные требования</h3>
+    <ul>
+      <li>ОС для запуска: Windows 11 21H2 и выше.</li>
+      <li>Браузер: Superium.</li>
+    </ul>
+    
+    <div class="copyright">
+      © VentraTech — VentraOS создан в WebOS (HTML, CSS, JS, PHP)
+    </div>
+  </div>
 
-    let currentUser = localStorage.getItem('ventra_active_demo_user') || null;
+  <!-- VENTRAOS SCREENSHOTS -->
+  <div class="ventraos-section liquidGlass-wrapper">
+    <h1>VentraOS</h1>
+    <h2>Скриншоты VentraOS</h2>
+    
+    <h3>Просмотреть ещё скриншоты</h3>
+    
+    <h3>Описание о данной системе</h3>
+    <p>VentraOS — Это операционная система для устройств сделанная в WebOS. В красивом дизайне который вам понравиться!</p>
+    <p>И всё это вы можете использовать на вашем компьютере. Прямо сейчас!</p>
+    
+    <span class="download-btn">Посмотреть требования</span>
+    
+    <div class="copyright">
+      © VentraTech — VentraOS создана в WebOS (HTML, CSS, JS, PHP)
+    </div>
+  </div>
 
-    // ---------- Pages ----------
-    function openPage(name) {
-      const pages = document.querySelectorAll('main.page');
-      pages.forEach(p => p.classList.remove('active'));
-      const btns = document.querySelectorAll('.navlink, .nav a');
-      btns.forEach(b => b.classList.remove('active'));
-      const page = document.getElementById('page-' + name);
-      if(!page) return console.warn('no page', name);
-      page.classList.add('active');
-      const btn = document.getElementById('btn-' + name);
-      if(btn) btn.classList.add('active');
-      window.scrollTo({top:0, behavior:'smooth'});
+  <!-- VENTRAOS FEATURES -->
+  <div class="ventraos-section liquidGlass-wrapper">
+    <h1>VentraOS</h1>
+    <p>Операционная система, сделанная в WebOS. Удивительно красивая и очень функциональная.</p>
+    <span class="download-btn">Download is currently not available</span>
+    
+    <hr style="margin: 30px 0; border: 1px solid rgba(255,255,255,0.1);">
+    
+    <h2>VentraUI</h2>
+    <p>Дизайн VentraUI - Это единый красивый дизайн с большими возможностями оформления.</p>
+    
+    <h2>VentraAI</h2>
+    <p>VentraAI — Это оффлайн ИИ помощник из коробки в VentraOS, генерируйте запросы легко и просто.</p>
+    
+    <h2>Opix-Браузер</h2>
+    <p>Легкий встроенный браузер в VentraOS — Безусловный способ к простому серфингу по интернету.</p>
+    
+    <h2>Простая установка</h2>
+    <p>Очень удобная, практичная, быстрая установка! VentraOS не требует ничего, кроме браузера и Windows 11.</p>
+    
+    <h2>Многофункциональная</h2>
+    <p>В VentraOS есть скрипты JavaScript, с помощью которых вы можете делать ОЧЕНЬ много всего...</p>
+    
+    <h3>Скриншоты VentraOS</h3>
+  </div>
 
-      // When opening experients, check region and warn if needed
-      if(name === 'experiences') {
-        checkRegionAndWarn();
-      }
-    }
+  <!-- DOCK -->
+  <div class="dock liquidGlass-wrapper">
+      <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+      <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></div>
+      <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg></div>
+  </div>
 
-    // ---------- Language (simple) ----------
-    function setLang(lang) {
-      // kept minimal: labels can be expanded if needed
-    }
+  <svg style="position: fixed; width: 0; height: 0;">
+    <filter id="liquid-glass">
+      <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" />
+    </filter>
+  </svg>
 
-    // ---------- Region detection ----------
-    // Try to detect region from navigator.language (best-effort). User can also set country via questionnaire.
-    function detectRegion() {
-      // e.g. "en-US", "uk-UA"
-      const lang = navigator.language || navigator.userLanguage || '';
-      const m = lang.match(/-([A-Z]{2})$/i);
-      if(m) return m[1].toUpperCase();
-      return null;
-    }
-    const ALLOWED = ['US','UA','PL'];
-    let detectedRegion = detectRegion();
-
-    function checkRegionAndWarn() {
-      const warnEl = document.getElementById('regionWarn');
-      let region = detectedRegion;
-      if(currentUser && users[currentUser] && users[currentUser].country) region = users[currentUser].country;
-      if(region && ALLOWED.includes(region)) {
-        warnEl.className = ''; warnEl.textContent = '';
-        return true;
-      } else {
-        warnEl.className = 'region-warning show';
-        warnEl.textContent = '⚠️ Experients доступні тільки в США, Україні та Польщі. Якщо ви з однієї з цих країн — увійдіть або пройдіть анкету.';
-        return false;
-      }
-    }
-
-    // ---------- Experient "Learn more" flow ----------
-    function openExp(key) {
-      // require region + login for dev page access
-      const ok = checkRegionAndWarn();
-      if(!ok) {
-        // if guest, show questionnaire or suggestion
-        alert('Experients поки доступні тільки у США, Україні та Польщі. Якщо ви в одній з цих країн — увійдіть або пройдіть анкету.');
-        openQuestion();
-        return;
-      }
-
-      // require login for dev environment
-      if(!currentUser) {
-        alert('Будь ласка увійдіть, щоб відкрити сторінку експерименту.');
-        openPage('auth');
-        return;
-      }
-
-      // set title and open dev page
-      const title = (key === 'ventrai') ? 'VentraAI Developer' : 'CCode Developer';
-      document.getElementById('expDevTitle').textContent = title;
-      // load last saved files for user if exist
-      if(users[currentUser].files && Object.keys(users[currentUser].files).length) {
-        // if files exist, load 'main' into editor
-        const f = users[currentUser].files;
-        document.getElementById('devEditor').value = f.main || f['main.ventra'] || '';
-      } else {
-        document.getElementById('devEditor').value = "// Почніть тут...\nconsole.log('Ventra " + key + "');";
-      }
-      openPage('exp-dev');
-    }
-
-    // ---------- Auth ----------
-    function submitAuth(){
-      const u = (document.getElementById('loginUser').value || '').trim();
-      const p = (document.getElementById('loginPass').value || '');
-      if(!u || !p){ alert('Введіть логін та пароль'); return; }
-
-      if(users[u] && users[u].password === p) {
-        currentUser = u;
-        localStorage.setItem('ventra_active_demo_user', u);
-        alert('Ви увійшли як ' + u);
-        openPage('home');
-      } else {
-        // If not exists: offer to register quickly
-        if(confirm('Користувача не знайдено або пароль невірний. Зареєструвати нового користувача з цими даними?')) {
-          users[u] = { password:p, subscription:'FREE', country: detectedRegion || '', files: {} };
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-          currentUser = u;
-          localStorage.setItem('ventra_active_demo_user', u);
-          alert('Користувач створений і ви увійшли як ' + u);
-          openPage('home');
-        } else {
-          alert('Авторизація не виконана.');
-        }
-      }
-    }
-
-    // Quick toggle register (not a separate page in this demo)
-    function toggleRegister(){
-      // value kept simple: toggles placeholder text
-      const hdr = document.getElementById('authHeader');
-      hdr.textContent = hdr.textContent.includes('Авторизац') ? 'Реєстрація' : 'Авторизація';
-    }
-
-    // ---------- Questionnaire modal ----------
-    function openQuestionnaire(){ document.getElementById('questionModal').classList.add('active') }
-    function openQuestion(){ openQuestionnaire(); }
-    function closeQuestion(){ document.getElementById('questionModal').classList.remove('active') }
-    function submitQuestion(){
-      const name = document.getElementById('qName').value.trim();
-      const email = document.getElementById('qEmail').value.trim();
-      const country = document.getElementById('qCountry').value;
-      if(!name || !email || !country) { alert('Заповніть всі поля'); return; }
-      // store questionnaire (demo)
-      const key = 'ventra_question_' + Date.now();
-      localStorage.setItem(key, JSON.stringify({name,email,country}));
-      alert('Анкета отримана — Вам надано FREE доступ (demo).');
-      closeQuestion();
-      // optionally auto-create demo user
-      const u = email.split('@')[0];
-      if(!users[u]) {
-        users[u] = { password: 'demo', subscription:'FREE', country:country, files:{} };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-      }
-      currentUser = u; localStorage.setItem('ventra_active_demo_user', u);
-      openPage('home');
-    }
-
-    // ---------- Subscriptions ----------
-    function choosePlan(plan){
-      if(!currentUser) { alert('Увійдіть для вибору плану'); openPage('auth'); return; }
-      users[currentUser].subscription = plan;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-      alert('План ' + plan + ' обрано');
-    }
-
-    // ---------- Dev area: save / run / load ----------
-    function saveDev(){
-      if(!currentUser){ alert('Будь ласка увійдіть'); openPage('auth'); return; }
-      const code = document.getElementById('devEditor').value;
-      users[currentUser].files = users[currentUser].files || {};
-      users[currentUser].files.main = code;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-      document.getElementById('devOutput').textContent = 'Збережено';
-    }
-
-    function runDev(){
-      // very simple emulate: print to output
-      const code = document.getElementById('devEditor').value;
-      // don't eval user code in page — just simulate run
-      document.getElementById('devOutput').textContent = 'Запуск (емуляція) — виконано';
-      setTimeout(()=>{ document.getElementById('devOutput').textContent = 'Готово'; },800);
-    }
-
-    function loadDevFile(name){
-      if(users[currentUser] && users[currentUser].files && users[currentUser].files[name]) {
-        document.getElementById('devEditor').value = users[currentUser].files[name];
-      } else {
-        const seed = {
-          main: "// main.ventra\nconsole.log('main');",
-          ui: "// ui.ventra\n// UI module",
-          logic: "// logic.ventra\n// business logic"
-        };
-        document.getElementById('devEditor').value = seed[name] || '';
-      }
-    }
-
-    // ---------- Chat bot ----------
-    function sendMessage(){
-      const input = document.getElementById('chatInput');
-      const text = (input.value || '').trim();
-      if(!text) return;
-      const area = document.getElementById('chatMessages');
-      const msgUser = document.createElement('div'); msgUser.className='msg user'; msgUser.textContent = text; area.appendChild(msgUser);
-      input.value = ''; area.scrollTop = area.scrollHeight;
-      setTimeout(()=> {
-        const reply = document.createElement('div'); reply.className='msg bot';
-        reply.textContent = botReply(text);
-        area.appendChild(reply);
-        area.scrollTop = area.scrollHeight;
-      }, 500);
-    }
-    function botReply(text){
-      const t = text.toLowerCase();
-      if(t.includes('help') || t.includes('допом')) return 'Можу допомогти з документацією, прикладами коду та використанням CCode.';
-      if(t.includes('run') || t.includes('зап��с')) return 'Щоб запустити код — натисніть кнопку "Запустити" в редакторі.';
-      return 'Цікаве питання — уточніть детальніше або опишіть кроки проблеми.';
-    }
-
-    // ---------- On load ----------
-    (function init(){
-      // if user already logged - update UI button
-      if(currentUser) {
-        const b = document.getElementById('btn-auth');
-        if(b) { b.textContent = 'Вийти ('+currentUser+')'; b.onclick = () => { localStorage.removeItem('ventra_active_demo_user'); location.reload(); } }
-      }
-      // set hero year
-      document.getElementById('year').textContent = YEARS;
-    })();
-
-    // Keyboard: Ctrl/Cmd+S to save when dev page active
-    document.addEventListener('keydown', e => {
-      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
-        if(document.getElementById('page-exp-dev').classList.contains('active')) {
-          e.preventDefault(); saveDev();
-        }
-      }
-    });
-  </script>
 </body>
 </html>
