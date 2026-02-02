@@ -1,1965 +1,1361 @@
 <!DOCTYPE html>
+
 <html lang="uk">
+
 <head>
+
 <meta charset="UTF-8" />
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <title>VentraOS</title>
+
+
+
 <style>
-:root {
-    --bg: #f4f7fb;
-    --card: rgba(255,255,255,0.9);
-    --text: #0d1b2a;
-    --muted: rgba(13,27,42,0.65);
-    --accent: #78A0BD;
-    --accent2: #5f8fae;
-    --success: #4CAF50;
-    --warning: #FF9800;
-    --danger: #F44336;
-    --shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
-    --radius: 22px;
+
+:root{
+
+--bg: #f4f7fb;
+
+--card: rgba(255,255,255,0.9);
+
+--text: #0d1b2a;
+
+--muted: rgba(13,27,42,0.65);
+
+--accent: #78A0BD;
+
+--accent2: #5f8fae;
+
+--shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+
+--radius: 22px;
+
 }
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
 
-body {
-    margin: 0;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
+
+*{ box-sizing: border-box; }
+
+html{ scroll-behavior: smooth; }
+
+
+
+body{
+
+margin:0;
+
+font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+background: var(--bg);
+
+color: var(--text);
+
+overflow-x: hidden;
+
 }
+
+
 
 /* ===== HEADER ===== */
-header {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    z-index: 999;
-    height: 68px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 22px;
-    background: rgba(255,255,255,0.72);
-    backdrop-filter: blur(35px);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    animation: headerDrop 0.8s ease;
+
+header{
+
+position: fixed;
+
+top:0; left:0;
+
+width:100%;
+
+z-index: 999;
+
+height: 68px;
+
+display:flex;
+
+align-items:center;
+
+justify-content: space-between;
+
+padding: 0 22px;
+
+background: rgba(255,255,255,0.72);
+
+backdrop-filter: blur(35px);
+
+border-bottom: 1px solid rgba(0,0,0,0.05);
+
+animation: headerDrop 0.8s ease;
+
 }
 
-@keyframes headerDrop {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+
+
+@keyframes headerDrop{
+
+from{ transform: translateY(-20px); opacity: 0; }
+
+to{ transform: translateY(0); opacity: 1; }
+
 }
 
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: var(--text);
-    user-select: none;
+
+
+.brand{
+
+display:flex;
+
+align-items:center;
+
+gap: 12px;
+
+text-decoration:none;
+
+color: var(--text);
+
+user-select:none;
+
 }
 
-.logo {
-    width: 38px;
-    height: 38px;
-    border-radius: 14px;
-    display: grid;
-    place-items: center;
-    box-shadow: 0 8px 18px rgba(120,160,189,0.25);
-    background: linear-gradient(135deg, rgba(120,160,189,0.95), rgba(95,143,174,0.95));
-    transition: 0.35s ease;
-    animation: logoPulse 3s ease-in-out infinite;
+
+
+.logo{
+
+width: 38px;
+
+height: 38px;
+
+border-radius: 14px;
+
+display:grid;
+
+place-items:center;
+
+box-shadow: 0 8px 18px rgba(120,160,189,0.25);
+
+background: linear-gradient(135deg, rgba(120,160,189,0.95), rgba(95,143,174,0.95));
+
+transition: 0.35s ease;
+
+animation: logoPulse 3s ease-in-out infinite;
+
 }
 
-@keyframes logoPulse {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.06); }
+
+
+@keyframes logoPulse{
+
+0%,100%{ transform: scale(1); }
+
+50%{ transform: scale(1.06); }
+
 }
 
-.brandText {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 0.2px;
+
+
+.brandText{
+
+font-size: 22px;
+
+font-weight: 800;
+
+letter-spacing: 0.2px;
+
 }
 
-nav {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+
+
+nav{
+
+display:flex;
+
+align-items:center;
+
+gap: 14px;
+
 }
 
-.navBtn {
-    border: none;
-    background: rgba(0,0,0,0.04);
-    padding: 10px 16px;
-    border-radius: 16px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.25s ease;
-    color: var(--text);
+
+
+.navBtn{
+
+border: none;
+
+background: rgba(0,0,0,0.04);
+
+padding: 10px 16px;
+
+border-radius: 16px;
+
+font-size: 14px;
+
+cursor:pointer;
+
+transition: 0.25s ease;
+
+color: var(--text);
+
 }
 
-.navBtn:hover {
-    transform: scale(1.06);
-    background: rgba(0,0,0,0.06);
+
+
+.navBtn:hover{
+
+transform: scale(1.06);
+
+background: rgba(0,0,0,0.06);
+
 }
 
-.navBtn:active {
-    transform: scale(0.92);
+
+
+.navBtn:active{
+
+transform: scale(0.92);
+
 }
 
-.navBtn.active {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: white;
-    font-weight: 700;
-    box-shadow: 0 10px 22px rgba(120,160,189,0.25);
-    animation: navPop 0.35s ease;
+
+
+.navBtn.active{
+
+background: linear-gradient(135deg, var(--accent), var(--accent2));
+
+color: white;
+
+font-weight: 700;
+
+box-shadow: 0 10px 22px rgba(120,160,189,0.25);
+
+animation: navPop 0.35s ease;
+
 }
 
-@keyframes navPop {
-    from { transform: scale(0.85); opacity: 0.6; }
-    to { transform: scale(1); opacity: 1; }
+
+
+@keyframes navPop{
+
+from{ transform: scale(0.85); opacity: 0.6; }
+
+to{ transform: scale(1); opacity: 1; }
+
 }
 
-.langBox {
-    display: flex;
-    gap: 8px;
-    padding: 6px;
-    border-radius: 16px;
-    background: rgba(0,0,0,0.04);
+
+
+.langBox{
+
+display:flex;
+
+gap: 8px;
+
+padding: 6px;
+
+border-radius: 16px;
+
+background: rgba(0,0,0,0.04);
+
 }
 
-.langBtn {
-    border: none;
-    cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 14px;
-    font-weight: 700;
-    background: transparent;
-    transition: 0.25s ease;
+
+
+.langBtn{
+
+border:none;
+
+cursor:pointer;
+
+padding: 8px 12px;
+
+border-radius: 14px;
+
+font-weight: 700;
+
+background: transparent;
+
+transition: 0.25s ease;
+
 }
 
-.langBtn:hover { transform: scale(1.07); }
-.langBtn:active { transform: scale(0.92); }
 
-.langBtn.active {
-    background: white;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.08);
-    animation: navPop 0.35s ease;
+
+.langBtn:hover{ transform: scale(1.07); }
+
+.langBtn:active{ transform: scale(0.92); }
+
+
+
+.langBtn.active{
+
+background: white;
+
+box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+
+animation: navPop 0.35s ease;
+
 }
 
-/* ===== PAGES ===== */
-.page {
-    display: none;
-    min-height: calc(100vh - 68px);
-    opacity: 0;
-    transform: translateY(18px);
+
+
+/* ===== PAGES + TRANSITIONS ===== */
+
+.page{
+
+display:none;
+
+min-height: calc(100vh - 68px);
+
+opacity: 0;
+
+transform: translateY(18px);
+
 }
 
-.page.active {
-    display: block;
-    animation: pageIn 0.55s ease forwards;
+
+
+.page.active{
+
+display:block;
+
+animation: pageIn 0.55s ease forwards;
+
 }
 
-@keyframes pageIn {
-    from { opacity: 0; transform: translateY(18px); }
-    to { opacity: 1; transform: translateY(0); }
+
+
+@keyframes pageIn{
+
+from{ opacity: 0; transform: translateY(18px); }
+
+to{ opacity: 1; transform: translateY(0); }
+
 }
+
+
 
 /* ===== HERO ===== */
-.hero {
-    margin-top: 68px;
-    height: 560px;
-    display: flex;
-    align-items: center;
-    padding: 0 6%;
-    position: relative;
-    overflow: hidden;
-    background:
-        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.45), transparent 55%),
-        radial-gradient(circle at 80% 30%, rgba(255,255,255,0.35), transparent 55%),
-        linear-gradient(135deg, rgba(120,160,189,0.55), rgba(120,160,189,0.35));
+
+.hero{
+
+margin-top: 68px;
+
+height: 560px;
+
+display:flex;
+
+align-items:center;
+
+padding: 0 6%;
+
+position: relative;
+
+overflow:hidden;
+
+background:
+
+radial-gradient(circle at 20% 20%, rgba(255,255,255,0.45), transparent 55%),
+
+radial-gradient(circle at 80% 30%, rgba(255,255,255,0.35), transparent 55%),
+
+linear-gradient(135deg, rgba(120,160,189,0.55), rgba(120,160,189,0.35));
+
 }
 
-.bubble {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.22);
-    filter: blur(1px);
-    animation: floatUp 10s linear infinite;
+
+
+/* floating bubbles */
+
+.bubble{
+
+position:absolute;
+
+border-radius: 50%;
+
+background: rgba(255,255,255,0.22);
+
+filter: blur(1px);
+
+animation: floatUp 10s linear infinite;
+
 }
 
-@keyframes floatUp {
-    from { transform: translateY(120px) translateX(0); opacity: 0; }
-    15% { opacity: 1; }
-    to { transform: translateY(-700px) translateX(50px); opacity: 0; }
+
+
+@keyframes floatUp{
+
+from{ transform: translateY(120px) translateX(0); opacity: 0; }
+
+15%{ opacity: 1; }
+
+to{ transform: translateY(-700px) translateX(50px); opacity: 0; }
+
 }
 
-.heroInner {
-    max-width: 520px;
-    position: relative;
-    z-index: 2;
-    color: white;
-    animation: heroTextIn 0.9s ease;
+
+
+.hero::after{
+
+content:"";
+
+position:absolute;
+
+right:-120px;
+
+top:-120px;
+
+width: 520px;
+
+height: 520px;
+
+border-radius: 50%;
+
+background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 60%);
+
+filter: blur(2px);
+
 }
 
-@keyframes heroTextIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+
+
+.heroInner{
+
+max-width: 520px;
+
+position: relative;
+
+z-index: 2;
+
+color: white;
+
+animation: heroTextIn 0.9s ease;
+
 }
 
-.heroTitle {
-    font-size: 64px;
-    margin: 0;
-    font-weight: 900;
-    letter-spacing: 0.5px;
-    text-shadow: 0 18px 40px rgba(0,0,0,0.18);
+
+
+@keyframes heroTextIn{
+
+from{ opacity: 0; transform: translateY(20px); }
+
+to{ opacity: 1; transform: translateY(0); }
+
 }
 
-.heroSub {
-    margin-top: 10px;
-    font-size: 18px;
-    line-height: 1.45;
-    opacity: 0.95;
+
+
+.heroTitle{
+
+font-size: 64px;
+
+margin:0;
+
+font-weight: 900;
+
+letter-spacing: 0.5px;
+
+text-shadow: 0 18px 40px rgba(0,0,0,0.18);
+
 }
 
-.heroBtns {
-    display: flex;
-    gap: 12px;
-    margin-top: 18px;
-    flex-wrap: wrap;
+
+
+.heroSub{
+
+margin-top: 10px;
+
+font-size: 18px;
+
+line-height: 1.45;
+
+opacity: 0.95;
+
 }
 
-.btn {
-    border: none;
-    cursor: pointer;
-    padding: 12px 18px;
-    border-radius: 16px;
-    font-weight: 800;
-    transition: 0.25s ease;
-    font-size: 14px;
+
+
+.heroBtns{
+
+display:flex;
+
+gap: 12px;
+
+margin-top: 18px;
+
+flex-wrap: wrap;
+
 }
 
-.btnPrimary {
-    background: white;
-    color: var(--accent2);
-    box-shadow: 0 14px 28px rgba(0,0,0,0.12);
+
+
+.btn{
+
+border:none;
+
+cursor:pointer;
+
+padding: 12px 18px;
+
+border-radius: 16px;
+
+font-weight: 800;
+
+transition: 0.25s ease;
+
+font-size: 14px;
+
 }
 
-.btnPrimary:hover { transform: scale(1.08); }
-.btnPrimary:active { transform: scale(0.93); }
 
-.btnGhost {
-    background: rgba(255,255,255,0.18);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.25);
+
+.btnPrimary{
+
+background: white;
+
+color: var(--accent2);
+
+box-shadow: 0 14px 28px rgba(0,0,0,0.12);
+
 }
 
-.btnGhost:hover { transform: scale(1.06); background: rgba(255,255,255,0.22); }
-.btnGhost:active { transform: scale(0.93); }
+
+
+.btnPrimary:hover{ transform: scale(1.08); }
+
+.btnPrimary:active{ transform: scale(0.93); }
+
+
+
+.btnGhost{
+
+background: rgba(255,255,255,0.18);
+
+color: white;
+
+border: 1px solid rgba(255,255,255,0.25);
+
+}
+
+
+
+.btnGhost:hover{ transform: scale(1.06); background: rgba(255,255,255,0.22); }
+
+.btnGhost:active{ transform: scale(0.93); }
+
+
 
 /* ===== CARDS ===== */
-.sectionTitle {
-    text-align: center;
-    padding: 18px 14px 0 14px;
-    font-weight: 900;
-    color: rgba(0,0,0,0.65);
-    animation: fadeIn 0.8s ease;
+
+.sectionTitle{
+
+text-align:center;
+
+padding: 18px 14px 0 14px;
+
+font-weight: 900;
+
+color: rgba(0,0,0,0.65);
+
+animation: fadeIn 0.8s ease;
+
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+
+
+@keyframes fadeIn{
+
+from{ opacity: 0; }
+
+to{ opacity: 1; }
+
 }
 
-.tiles {
-    padding: 28px 6% 44px 6%;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 22px;
+
+
+.tiles{
+
+padding: 28px 6% 44px 6%;
+
+display:grid;
+
+grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+gap: 22px;
+
 }
 
-.tile {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 20px;
-    box-shadow: var(--shadow);
-    transition: 0.25s ease;
-    border: 1px solid rgba(0,0,0,0.05);
-    min-height: 160px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    opacity: 0;
-    transform: translateY(18px);
-    animation: cardIn 0.6s ease forwards;
+
+
+.tile{
+
+background: var(--card);
+
+border-radius: var(--radius);
+
+padding: 20px;
+
+box-shadow: var(--shadow);
+
+transition: 0.25s ease;
+
+border: 1px solid rgba(0,0,0,0.05);
+
+min-height: 160px;
+
+display:flex;
+
+flex-direction: column;
+
+gap: 8px;
+
+
+
+opacity: 0;
+
+transform: translateY(18px);
+
+animation: cardIn 0.6s ease forwards;
+
 }
 
-@keyframes cardIn {
-    from { opacity: 0; transform: translateY(18px); }
-    to { opacity: 1; transform: translateY(0); }
+
+
+@keyframes cardIn{
+
+from{ opacity: 0; transform: translateY(18px); }
+
+to{ opacity: 1; transform: translateY(0); }
+
 }
 
-.tile:hover {
-    transform: translateY(-10px) scale(1.02);
+
+
+.tile:hover{
+
+transform: translateY(-10px) scale(1.02);
+
 }
 
-.tile:active {
-    transform: translateY(-6px) scale(0.98);
+
+
+.tile:active{
+
+transform: translateY(-6px) scale(0.98);
+
 }
 
-.tile h3 {
-    margin: 0;
-    font-size: 18px;
-    color: var(--accent2);
-    font-weight: 900;
+
+
+.tile h3{
+
+margin:0;
+
+font-size: 18px;
+
+color: var(--accent2);
+
+font-weight: 900;
+
 }
 
-.tile p {
-    margin: 0;
-    color: var(--muted);
-    line-height: 1.45;
-    font-size: 14px;
+
+
+.tile p{
+
+margin:0;
+
+color: var(--muted);
+
+line-height: 1.45;
+
+font-size: 14px;
+
 }
 
-/* ===== VENTRA MESSAGES PAGE ===== */
-.messagesWrap {
-    margin-top: 68px;
-    padding: 30px 6%;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    min-height: 100vh;
-}
 
-.authSection {
-    background: rgba(255,255,255,0.9);
-    border-radius: 26px;
-    padding: 28px;
-    margin-bottom: 30px;
-    box-shadow: var(--shadow);
-    border: 1px solid rgba(0,0,0,0.05);
-    animation: pageIn 0.55s ease;
-}
-
-.authToggle {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid rgba(0,0,0,0.05);
-}
-
-.authTab {
-    padding: 10px 20px;
-    border: none;
-    background: rgba(0,0,0,0.04);
-    border-radius: 16px;
-    cursor: pointer;
-    transition: 0.25s ease;
-    font-weight: 600;
-}
-
-.authTab.active {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: white;
-}
-
-.authForm {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.formGroup label {
-    font-weight: 600;
-    color: var(--text);
-    font-size: 14px;
-}
-
-.formGroup input, .formGroup textarea, .formGroup select {
-    padding: 12px 16px;
-    border-radius: 16px;
-    border: 2px solid rgba(0,0,0,0.08);
-    background: rgba(255,255,255,0.9);
-    font-size: 14px;
-    transition: 0.25s ease;
-}
-
-.formGroup input:focus, .formGroup textarea:focus {
-    outline: none;
-    border-color: var(--accent);
-}
-
-.verificationNote {
-    background: rgba(255,152,0,0.1);
-    padding: 12px;
-    border-radius: 12px;
-    font-size: 13px;
-    color: var(--warning);
-    margin-top: 10px;
-    border: 1px solid rgba(255,152,0,0.2);
-}
-
-.createPostSection {
-    background: rgba(255,255,255,0.9);
-    border-radius: 26px;
-    padding: 28px;
-    margin-bottom: 30px;
-    box-shadow: var(--shadow);
-    border: 1px solid rgba(0,0,0,0.05);
-    animation: pageIn 0.55s ease;
-    display: none;
-}
-
-.createPostSection.active {
-    display: block;
-}
-
-.postForm {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.colorPicker {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.colorOption {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 3px solid transparent;
-    cursor: pointer;
-    transition: 0.25s ease;
-}
-
-.colorOption:hover {
-    transform: scale(1.1);
-}
-
-.colorOption.selected {
-    border-color: var(--text);
-}
-
-.hashtagInput {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px;
-    border-radius: 16px;
-    border: 2px solid rgba(0,0,0,0.08);
-    min-height: 50px;
-}
-
-.hashtag {
-    background: rgba(120,160,189,0.15);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--accent2);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.hashtag .remove {
-    cursor: pointer;
-    opacity: 0.7;
-}
-
-.hashtag .remove:hover {
-    opacity: 1;
-}
-
-.hashtagInput input {
-    border: none;
-    outline: none;
-    background: transparent;
-    min-width: 100px;
-    flex-grow: 1;
-}
-
-.postCounter {
-    font-size: 12px;
-    color: var(--muted);
-    text-align: right;
-}
-
-.postsFeed {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.postCard {
-    background: rgba(255,255,255,0.9);
-    border-radius: 26px;
-    padding: 24px;
-    box-shadow: var(--shadow);
-    border: 1px solid rgba(0,0,0,0.05);
-    animation: cardIn 0.6s ease;
-    position: relative;
-}
-
-.postHeader {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 15px;
-}
-
-.userAvatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 700;
-    font-size: 16px;
-}
-
-.userInfo {
-    flex-grow: 1;
-}
-
-.username {
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 3px;
-}
-
-.postTime {
-    font-size: 12px;
-    color: var(--muted);
-}
-
-.verifiedBadge {
-    background: var(--success);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 10px;
-    font-weight: 700;
-    display: inline-block;
-    margin-left: 8px;
-}
-
-.adminBadge {
-    background: var(--danger);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 10px;
-    font-weight: 700;
-    display: inline-block;
-    margin-left: 8px;
-}
-
-.postContent {
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 15px;
-    padding: 10px 0;
-}
-
-.postHashtags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 15px;
-}
-
-.postHashtags .hashtag {
-    background: rgba(0,0,0,0.05);
-    color: var(--text);
-}
-
-.adminActions {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    gap: 8px;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-}
-
-.postCard:hover .adminActions {
-    opacity: 1;
-}
-
-.adminBtn {
-    padding: 6px 12px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-    transition: 0.25s ease;
-}
-
-.warnBtn {
-    background: rgba(255,152,0,0.15);
-    color: var(--warning);
-}
-
-.banBtn {
-    background: rgba(244,67,54,0.15);
-    color: var(--danger);
-}
-
-.deleteBtn {
-    background: rgba(0,0,0,0.08);
-    color: var(--text);
-}
-
-.adminPanelBtn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    padding: 14px 20px;
-    border-radius: 18px;
-    background: linear-gradient(135deg, var(--danger), #d32f2f);
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: 700;
-    box-shadow: 0 10px 30px rgba(244,67,54,0.3);
-    z-index: 100;
-    transition: 0.25s ease;
-    display: none;
-}
-
-.adminPanelBtn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(244,67,54,0.4);
-}
-
-.adminPanelBtn:active {
-    transform: translateY(0);
-}
 
 /* ===== DOWNLOAD PAGE ===== */
-.downloadWrap {
-    margin-top: 68px;
-    padding: 80px 6%;
-    text-align: center;
+
+.downloadWrap{
+
+margin-top: 68px;
+
+padding: 80px 6%;
+
+text-align:center;
+
 }
 
-.bigTitle {
-    font-size: 44px;
-    font-weight: 950;
-    margin: 0;
+
+
+.bigTitle{
+
+font-size: 44px;
+
+font-weight: 950;
+
+margin: 0;
+
 }
 
-.bigSub {
-    margin-top: 12px;
-    font-size: 16px;
-    color: var(--muted);
+
+
+.bigSub{
+
+margin-top: 12px;
+
+font-size: 16px;
+
+color: var(--muted);
+
 }
 
-.releaseBox {
-    margin: 28px auto 0 auto;
-    max-width: 680px;
-    background: rgba(255,255,255,0.85);
-    border-radius: 26px;
-    padding: 26px;
-    box-shadow: var(--shadow);
-    border: 1px solid rgba(0,0,0,0.05);
-    animation: popUp 0.55s ease;
+
+
+.releaseBox{
+
+margin: 28px auto 0 auto;
+
+max-width: 680px;
+
+background: rgba(255,255,255,0.85);
+
+border-radius: 26px;
+
+padding: 26px;
+
+box-shadow: var(--shadow);
+
+border: 1px solid rgba(0,0,0,0.05);
+
+animation: popUp 0.55s ease;
+
 }
 
-@keyframes popUp {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+
+
+@keyframes popUp{
+
+from{ transform: scale(0.9); opacity: 0; }
+
+to{ transform: scale(1); opacity: 1; }
+
 }
 
-.releaseBadge {
-    display: inline-block;
-    padding: 8px 14px;
-    border-radius: 999px;
-    background: rgba(120,160,189,0.15);
-    color: var(--accent2);
-    font-weight: 900;
-    font-size: 13px;
-    margin-bottom: 14px;
+
+
+.releaseBadge{
+
+display:inline-block;
+
+padding: 8px 14px;
+
+border-radius: 999px;
+
+background: rgba(120,160,189,0.15);
+
+color: var(--accent2);
+
+font-weight: 900;
+
+font-size: 13px;
+
+margin-bottom: 14px;
+
 }
+
+
 
 /* ===== ABOUT PAGE ===== */
-.aboutWrap {
-    margin-top: 68px;
-    padding: 80px 6%;
-    max-width: 980px;
-    margin-left: auto;
-    margin-right: auto;
+
+.aboutWrap{
+
+margin-top: 68px;
+
+padding: 80px 6%;
+
+max-width: 980px;
+
+margin-left:auto;
+
+margin-right:auto;
+
 }
 
-.aboutCard {
-    background: rgba(255,255,255,0.9);
-    border-radius: 26px;
-    padding: 28px;
-    box-shadow: var(--shadow);
-    border: 1px solid rgba(0,0,0,0.05);
-    animation: pageIn 0.55s ease forwards;
+
+
+.aboutCard{
+
+background: rgba(255,255,255,0.9);
+
+border-radius: 26px;
+
+padding: 28px;
+
+box-shadow: var(--shadow);
+
+border: 1px solid rgba(0,0,0,0.05);
+
+animation: pageIn 0.55s ease forwards;
+
 }
 
-.aboutCard h2 {
-    margin: 0;
-    font-size: 34px;
-    font-weight: 950;
+
+
+.aboutCard h2{
+
+margin:0;
+
+font-size: 34px;
+
+font-weight: 950;
+
 }
 
-.aboutCard p {
-    margin-top: 12px;
-    color: var(--muted);
-    line-height: 1.6;
-    font-size: 15px;
+
+
+.aboutCard p{
+
+margin-top: 12px;
+
+color: var(--muted);
+
+line-height: 1.6;
+
+font-size: 15px;
+
 }
 
-/* ===== MODAL ===== */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease;
+
+
+footer{
+
+text-align:center;
+
+padding: 22px;
+
+color: rgba(0,0,0,0.5);
+
+font-size: 13px;
+
 }
 
-.modal.active {
-    display: flex;
-}
 
-.modalContent {
-    background: white;
-    border-radius: 26px;
-    padding: 30px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    animation: popUp 0.4s ease;
-}
-
-.modal h3 {
-    margin: 0 0 20px 0;
-    color: var(--accent2);
-    font-size: 20px;
-    font-weight: 900;
-}
-
-.modalActions {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-    justify-content: flex-end;
-}
-
-/* ===== FOOTER ===== */
-footer {
-    text-align: center;
-    padding: 22px;
-    color: rgba(0,0,0,0.5);
-    font-size: 13px;
-}
 
 /* Mobile */
-@media (max-width: 720px) {
-    .heroTitle { font-size: 46px; }
-    nav { gap: 10px; }
-    .navBtn { padding: 10px 12px; }
-    .adminPanelBtn {
-        bottom: 20px;
-        right: 20px;
-        padding: 12px 16px;
-        font-size: 14px;
-    }
+
+@media (max-width: 720px){
+
+.heroTitle{ font-size: 46px; }
+
+nav{ gap: 10px; }
+
+.navBtn{ padding: 10px 12px; }
+
 }
+
 </style>
+
 </head>
 
+
+
 <body>
+
+
+
 <header>
-    <a class="brand" href="#" onclick="openPage('home')">
-        <div class="logo">
-            <svg width="26" height="26" viewBox="0 0 64 64" fill="none">
-                <path d="M32 6C18.2 6 7 17.2 7 31s11.2 25 25 25 25-11.2 25-25S45.8 6 32 6Z" fill="white" opacity="0.92"/>
-                <path d="M32 14c9.4 0 17 7.6 17 17S41.4 48 32 48 15 40.4 15 31 22.6 14 32 14Z" fill="#78A0BD"/>
-                <path d="M22 33l6 6 14-18" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </div>
-        <span class="brandText">VentraOS</span>
-    </a>
 
-    <nav>
-        <button class="navBtn active" id="btn-home" onclick="openPage('home')" data-i18n="nav_home">Головна</button>
-        <button class="navBtn" id="btn-messages" onclick="openPage('messages')" data-i18n="nav_messages">VentraMessages</button>
-        <button class="navBtn" id="btn-download" onclick="openPage('download')" data-i18n="nav_download">Завантаження</button>
-        <button class="navBtn" id="btn-about" onclick="openPage('about')" data-i18n="nav_about">About</button>
+<a class="brand" href="#" onclick="openPage('home')">
 
-        <div class="langBox">
-            <button class="langBtn active" id="langUA" onclick="setLang('uk')">UA</button>
-            <button class="langBtn" id="langEN" onclick="setLang('en')">EN</button>
-        </div>
-    </nav>
-</header>
+<div class="logo">
 
-<!-- HOME PAGE -->
-<main class="page active" id="page-home">
-    <section class="hero">
-        <div class="bubble" style="width:70px;height:70px;left:10%;bottom:-100px;animation-duration:11s;"></div>
-        <div class="bubble" style="width:45px;height:45px;left:30%;bottom:-120px;animation-duration:9s;"></div>
-        <div class="bubble" style="width:90px;height:90px;left:55%;bottom:-150px;animation-duration:13s;"></div>
-        <div class="bubble" style="width:55px;height:55px;left:78%;bottom:-100px;animation-duration:10s;"></div>
-        <div class="bubble" style="width:35px;height:35px;left:90%;bottom:-130px;animation-duration:8s;"></div>
+<!-- Custom logo SVG -->
 
-        <div class="heroInner">
-            <h1 class="heroTitle">VentraOS</h1>
-            <p class="heroSub" data-i18n="hero_sub">
-                Сучасна операційна система у стилі WebOS. Дуже красива, швидка та зручна для кожного.
-            </p>
-            <div class="heroBtns">
-                <button class="btn btnPrimary" onclick="openPage('download')" data-i18n="hero_btn">Завантажити</button>
-                <button class="btn btnGhost" onclick="openPage('about')" data-i18n="hero_btn2">Про студію</button>
-            </div>
-        </div>
-    </section>
+<svg width="26" height="26" viewBox="0 0 64 64" fill="none">
 
-    <h3 class="sectionTitle" data-i18n="cards_title">Можливості VentraOS</h3>
-    <section class="tiles" id="tiles">
-        <div class="tile">
-            <h3 data-i18n="c1_t">VentraUI</h3>
-            <p data-i18n="c1_d">Дуже сучасний дизайн з плавними анімаціями та красивими елементами.</p>
-        </div>
-        <div class="tile">
-            <h3 data-i18n="c2_t">VentraAI</h3>
-            <p data-i18n="c2_d">Розумні функції та майбутні інструменти прямо з коробки.</p>
-        </div>
-        <div class="tile">
-            <h3 data-i18n="c3_t">Ventra Browser</h3>
-            <p data-i18n="c3_d">Легкий вбудований браузер для швидкого доступу до інтернету.</p>
-        </div>
-        <div class="tile">
-            <h3 data-i18n="c4_t">Проста установка</h3>
-            <p data-i18n="c4_d">Мінімум налаштувань — максимум комфорту. Все інтуїтивно та швидко.</p>
-        </div>
-        <div class="tile">
-            <h3 data-i18n="c5_t">Мультифункціональність</h3>
-            <p data-i18n="c5_d">VentraOS створена для навчання, роботи та творчості в одному місці.</p>
-        </div>
-    </section>
-    <footer>© <span id="year"></span> VentraOS • Ventra Tech</footer>
-</main>
+<path d="M32 6C18.2 6 7 17.2 7 31s11.2 25 25 25 25-11.2 25-25S45.8 6 32 6Z" fill="white" opacity="0.92"/>
 
-<!-- VENTRA MESSAGES PAGE -->
-<main class="page" id="page-messages">
-    <div class="messagesWrap">
-        <!-- Authentication Section -->
-        <div class="authSection" id="authSection">
-            <div class="authToggle">
-                <button class="authTab active" onclick="switchAuthTab('login')">Вхід</button>
-                <button class="authTab" onclick="switchAuthTab('register')">Реєстрація</button>
-                <button class="authTab" onclick="switchAuthTab('verify')">Верифікація</button>
-            </div>
-            
-            <!-- Login Form -->
-            <div class="authForm" id="loginForm">
-                <div class="formGroup">
-                    <label>Ваш нікнейм:</label>
-                    <input type="text" id="loginUsername" placeholder="@username (до 20 символів)" maxlength="20">
-                </div>
-                <button class="btn btnPrimary" onclick="login()">Увійти в систему</button>
-            </div>
-            
-            <!-- Registration Form -->
-            <div class="authForm" id="registerForm" style="display: none;">
-                <div class="formGroup">
-                    <label>Оберіть нікнейм:</label>
-                    <input type="text" id="registerUsername" placeholder="@username (до 20 символів)" maxlength="20" oninput="updateAvatarPreview()">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
-                        <div class="userAvatar" id="avatarPreview" style="width: 30px; height: 30px; font-size: 12px;">@</div>
-                        <span style="font-size: 12px; color: var(--muted);">Це ваш аватар</span>
-                    </div>
-                </div>
-                <button class="btn btnPrimary" onclick="register()">Зареєструватись</button>
-            </div>
-            
-            <!-- Verification Form -->
-            <div class="authForm" id="verifyForm" style="display: none;">
-                <div class="formGroup">
-                    <label>Ваш нікнейм:</label>
-                    <input type="text" id="verifyUsername" placeholder="@username">
-                </div>
-                <div class="formGroup">
-                    <label>Тип верифікації:</label>
-                    <select id="verifyType">
-                        <option value="director">Директор компанії/студії</option>
-                        <option value="document">Фото документа</option>
-                        <option value="video">Відео-підтвердження</option>
-                    </select>
-                </div>
-                <div class="formGroup">
-                    <label>Посилання на відео/фото:</label>
-                    <input type="text" id="verifyLink" placeholder="https://drive.google.com/... або інше посилання">
-                </div>
-                <div class="verificationNote">
-                    📹 Записати відео де ви говорите: "Я [Ім'я], директор [Компанія], запитую верифікацію для @username"
-                </div>
-                <button class="btn btnPrimary" onclick="submitVerification()">Надіслати запит</button>
-            </div>
-        </div>
-        
-        <!-- Create Post Section -->
-        <div class="createPostSection" id="createPostSection">
-            <h3 style="margin: 0 0 20px 0; color: var(--accent2);">Створити пост</h3>
-            <div class="postForm">
-                <div class="formGroup">
-                    <label>Текст поста:</label>
-                    <textarea id="postText" placeholder="Що у вас нового?" rows="4" maxlength="500" oninput="updateCharCount()"></textarea>
-                    <div class="postCounter"><span id="charCount">0</span>/500</div>
-                </div>
-                
-                <div class="formGroup">
-                    <label>Колір тексту:</label>
-                    <div class="colorPicker">
-                        <div class="colorOption selected" style="background: #0d1b2a;" data-color="#0d1b2a" onclick="selectColor(this)"></div>
-                        <div class="colorOption" style="background: #78A0BD;" data-color="#78A0BD" onclick="selectColor(this)"></div>
-                        <div class="colorOption" style="background: #4CAF50;" data-color="#4CAF50" onclick="selectColor(this)"></div>
-                        <div class="colorOption" style="background: #FF9800;" data-color="#FF9800" onclick="selectColor(this)"></div>
-                        <div class="colorOption" style="background: #F44336;" data-color="#F44336" onclick="selectColor(this)"></div>
-                        <div class="colorOption" style="background: #9C27B0;" data-color="#9C27B0" onclick="selectColor(this)"></div>
-                    </div>
-                </div>
-                
-                <div class="formGroup">
-                    <label>Хештеги (макс. 20):</label>
-                    <div class="hashtagInput" id="hashtagContainer">
-                        <div class="hashtag">#viral <span class="remove" onclick="removeHashtag(this)">×</span></div>
-                        <div class="hashtag">#fyp <span class="remove" onclick="removeHashtag(this)">×</span></div>
-                        <div class="hashtag">#popylar <span class="remove" onclick="removeHashtag(this)">×</span></div>
-                        <div class="hashtag">#lyekser <span class="remove" onclick="removeHashtag(this)">×</span></div>
-                        <div class="hashtag">@VentraX.org <span class="remove" onclick="removeHashtag(this)">×</span></div>
-                        <input type="text" id="hashtagInput" placeholder="Додати хештег..." onkeypress="addHashtag(event)">
-                    </div>
-                </div>
-                
-                <div class="formGroup">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 12px; color: var(--muted);">Пости сьогодні: <span id="postsToday">0</span>/10</span>
-                        <button class="btn btnPrimary" onclick="createPost()">Опублікувати</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Posts Feed -->
-        <div class="postsFeed" id="postsFeed">
-            <!-- Posts will be loaded here -->
-        </div>
-    </div>
-    
-    <!-- Admin Panel Button -->
-    <button class="adminPanelBtn" id="adminPanelBtn" onclick="openAdminPanel()">🔧 Адмін-панель</button>
-    
-    <footer>© <span class="year2"></span> VentraOS • Ventra Tech</footer>
-</main>
+<path d="M32 14c9.4 0 17 7.6 17 17S41.4 48 32 48 15 40.4 15 31 22.6 14 32 14Z" fill="#78A0BD"/>
 
-<!-- DOWNLOAD PAGE -->
-<main class="page" id="page-download">
-    <div class="downloadWrap">
-        <h1 class="bigTitle" data-i18n="dl_title">Завантаження</h1>
-        <p class="bigSub" data-i18n="dl_sub">Тут буде офіційний інсталятор VentraOS.</p>
-        <div class="releaseBox">
-            <div class="releaseBadge" data-i18n="dl_badge">Очікується реліз</div>
-            <h2 style="margin:0;font-size:22px;font-weight:950;" data-i18n="dl_not">Not available, please wait for release</h2>
-            <p style="margin-top:10px;color:rgba(13,27,42,0.65);" data-i18n="dl_rel">Release in 05.02.2026</p>
-        </div>
-    </div>
-    <footer>© <span class="year3"></span> VentraOS • Ventra Tech</footer>
-</main>
+<path d="M22 33l6 6 14-18" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 
-<!-- ABOUT PAGE -->
-<main class="page" id="page-about">
-    <div class="aboutWrap">
-        <div class="aboutCard">
-            <h2 data-i18n="ab_title">Ventra Tech</h2>
-            <p data-i18n="ab_text">
-                Ventra Tech — студія, яка створює красиві та сучасні цифрові продукти.
-                VentraOS — наш головний проєкт, зроблений з любов'ю до дизайну, швидкості та простоти.
-            </p>
-            <p data-i18n="ab_text2">
-                Ми хочемо, щоб VentraOS виглядала максимально стильно та працювала швидко на будь-якому пристрої.
-            </p>
-        </div>
-    </div>
-    <footer>© <span class="year4"></span> VentraOS • Ventra Tech</footer>
-</main>
+</svg>
 
-<!-- ADMIN MODAL -->
-<div class="modal" id="adminModal">
-    <div class="modalContent">
-        <h3 id="modalTitle">Адмін-панель</h3>
-        <div id="modalContent">
-            <!-- Admin content will be loaded here -->
-        </div>
-        <div class="modalActions">
-            <button class="btn" onclick="closeModal()">Закрити</button>
-            <button class="btn btnPrimary" id="modalConfirmBtn" onclick="confirmModalAction()" style="display: none;">Підтвердити</button>
-        </div>
-    </div>
 </div>
 
-<script>
-// ===== DATA STORAGE =====
-const VentraStorage = {
-    users: JSON.parse(localStorage.getItem('ventra_users')) || [
-        {
-            username: 'admin',
-            avatar: 'A',
-            isAdmin: true,
-            isVerified: true,
-            warnings: 0,
-            banned: false,
-            joinDate: new Date().toISOString(),
-            postsToday: 0,
-            lastPostDate: new Date().toDateString(),
-            posts: []
-        },
-        {
-            username: 'VentraX.org',
-            avatar: 'V',
-            isAdmin: true,
-            isVerified: true,
-            warnings: 0,
-            banned: false,
-            joinDate: new Date().toISOString(),
-            postsToday: 0,
-            lastPostDate: new Date().toDateString(),
-            posts: []
-        }
-    ],
-    
-    posts: JSON.parse(localStorage.getItem('ventra_posts')) || [
-        {
-            id: 1,
-            username: 'VentraX.org',
-            text: 'Ласкаво просимо до VentraMessages! 🚀 Перша соціальна мережа в VentraOS. Тут ви можете ділитися думками, знаходити друзів та бути в курсі останніх новин.',
-            color: '#78A0BD',
-            hashtags: ['#viral', '#fyp', '#popylar', '#lyekser', '@VentraX.org', '#welcome'],
-            timestamp: new Date().toISOString(),
-            isVerified: true,
-            isAdmin: true,
-            likes: 42,
-            comments: 7
-        },
-        {
-            id: 2,
-            username: 'admin',
-            text: 'Тестуємо нову соцмережу! Всі функції працюють стабільно. За репорти багів - до @VentraX.org 😊',
-            color: '#4CAF50',
-            hashtags: ['#viral', '#fyp', '#popylar', '#lyekser', '@VentraX.org', '#test'],
-            timestamp: new Date(Date.now() - 3600000).toISOString(),
-            isVerified: true,
-            isAdmin: true,
-            likes: 28,
-            comments: 3
-        }
-    ],
-    
-    verificationRequests: JSON.parse(localStorage.getItem('ventra_verification')) || [],
-    
-    currentUser: JSON.parse(localStorage.getItem('ventra_currentUser')) || null,
-    
-    save() {
-        localStorage.setItem('ventra_users', JSON.stringify(this.users));
-        localStorage.setItem('ventra_posts', JSON.stringify(this.posts));
-        localStorage.setItem('ventra_verification', JSON.stringify(this.verificationRequests));
-        localStorage.setItem('ventra_currentUser', JSON.stringify(this.currentUser));
-    },
-    
-    resetDailyPosts() {
-        const today = new Date().toDateString();
-        this.users.forEach(user => {
-            if (user.lastPostDate !== today) {
-                user.postsToday = 0;
-                user.lastPostDate = today;
-            }
-        });
-        this.save();
-    },
-    
-    getUser(username) {
-        return this.users.find(u => u.username === username);
-    },
-    
-    addUser(user) {
-        this.users.push(user);
-        this.save();
-    },
-    
-    addPost(post) {
-        this.posts.unshift(post);
-        this.save();
-    }
-};
+<span class="brandText">VentraOS</span>
 
-// ===== INITIALIZATION =====
-document.getElementById('year').textContent = new Date().getFullYear();
-document.querySelectorAll('.year2, .year3, .year4').forEach(el => {
-    el.textContent = new Date().getFullYear();
+</a>
+
+
+
+<nav>
+
+<button class="navBtn active" id="btn-home" onclick="openPage('home')" data-i18n="nav_home">Головна</button>
+
+<button class="navBtn" id="btn-download" onclick="openPage('download')" data-i18n="nav_download">Завантаження</button>
+
+<button class="navBtn" id="btn-about" onclick="openPage('about')" data-i18n="nav_about">About</button>
+
+
+
+<div class="langBox">
+
+<button class="langBtn active" id="langUA" onclick="setLang('uk')">UA</button>
+
+<button class="langBtn" id="langEN" onclick="setLang('en')">EN</button>
+
+</div>
+
+</nav>
+
+</header>
+
+
+
+<!-- HOME PAGE -->
+
+<main class="page active" id="page-home">
+
+<section class="hero">
+
+
+
+<!-- bubbles -->
+
+<div class="bubble" style="width:70px;height:70px;left:10%;bottom:-100px;animation-duration:11s;"></div>
+
+<div class="bubble" style="width:45px;height:45px;left:30%;bottom:-120px;animation-duration:9s;"></div>
+
+<div class="bubble" style="width:90px;height:90px;left:55%;bottom:-150px;animation-duration:13s;"></div>
+
+<div class="bubble" style="width:55px;height:55px;left:78%;bottom:-100px;animation-duration:10s;"></div>
+
+<div class="bubble" style="width:35px;height:35px;left:90%;bottom:-130px;animation-duration:8s;"></div>
+
+
+
+<div class="heroInner">
+
+<h1 class="heroTitle">VentraOS</h1>
+
+<p class="heroSub" data-i18n="hero_sub">
+
+Сучасна операційна система у стилі WebOS. Дуже красива, швидка та зручна для кожного.
+
+</p>
+
+
+
+<div class="heroBtns">
+
+<button class="btn btnPrimary" onclick="openPage('download')" data-i18n="hero_btn">
+
+Завантажити
+
+</button>
+
+<button class="btn btnGhost" onclick="openPage('about')" data-i18n="hero_btn2">
+
+Про студію
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<h3 class="sectionTitle" data-i18n="cards_title">Можливості VentraOS</h3>
+
+
+
+<section class="tiles" id="tiles">
+
+<div class="tile">
+
+<h3 data-i18n="c1_t">VentraUI</h3>
+
+<p data-i18n="c1_d">Дуже сучасний дизайн з плавними анімаціями та красивими елементами.</p>
+
+</div>
+
+
+
+<div class="tile">
+
+<h3 data-i18n="c2_t">VentraAI</h3>
+
+<p data-i18n="c2_d">Розумні функції та майбутні інструменти прямо з коробки.</p>
+
+</div>
+
+
+
+<div class="tile">
+
+<h3 data-i18n="c3_t">Ventra Browser</h3>
+
+<p data-i18n="c3_d">Легкий вбудований браузер для швидкого доступу до інтернету.</p>
+
+</div>
+
+
+
+<div class="tile">
+
+<h3 data-i18n="c4_t">Проста установка</h3>
+
+<p data-i18n="c4_d">Мінімум налаштувань — максимум комфорту. Все інтуїтивно та швидко.</p>
+
+</div>
+
+
+
+<div class="tile">
+
+<h3 data-i18n="c5_t">Мультифункціональність</h3>
+
+<p data-i18n="c5_d">VentraOS створена для навчання, роботи та творчості в одному місці.</p>
+
+</div>
+
+</section>
+
+
+
+<footer>© <span id="year"></span> VentraOS • Ventra Tech</footer>
+
+</main>
+
+
+
+<!-- DOWNLOAD PAGE -->
+
+<main class="page" id="page-download">
+
+<div class="downloadWrap">
+
+<h1 class="bigTitle" data-i18n="dl_title">Завантаження</h1>
+
+<p class="bigSub" data-i18n="dl_sub">Тут буде офіційний інсталятор VentraOS.</p>
+
+
+
+<div class="releaseBox">
+
+<div class="releaseBadge" data-i18n="dl_badge">Очікується реліз</div>
+
+<h2 style="margin:0;font-size:22px;font-weight:950;" data-i18n="dl_not">
+
+Not aviable, please wait a release moment.
+
+</h2>
+
+<p style="margin-top:10px;color:rgba(13,27,42,0.65);" data-i18n="dl_rel">
+
+Release in 05.02.2026
+
+</p>
+
+</div>
+
+</div>
+
+
+
+<footer>© <span class="year2"></span> VentraOS • Ventra Tech</footer>
+
+</main>
+
+
+
+<!-- ABOUT PAGE -->
+
+<main class="page" id="page-about">
+
+<div class="aboutWrap">
+
+<div class="aboutCard">
+
+<h2 data-i18n="ab_title">Ventra Tech</h2>
+
+<p data-i18n="ab_text">
+
+Ventra Tech — студія, яка створює красиві та сучасні цифрові продукти.
+
+VentraOS — наш головний проєкт, зроблений з любов’ю до дизайну, швидкості та простоти.
+
+</p>
+
+
+
+<p data-i18n="ab_text2">
+
+Ми хочемо, щоб VentraOS виглядала максимально стильно та працювала швидко на будь-якому пристрої.
+
+</p>
+
+</div>
+
+</div>
+
+
+
+<footer>© <span class="year3"></span> VentraOS • Ventra Tech</footer>
+
+</main>
+
+
+
+<script>
+
+// years
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+document.querySelectorAll(".year2,.year3").forEach(el => el.textContent = new Date().getFullYear());
+
+
+
+// add delay animation for cards (nice effect)
+
+function animateCards(){
+
+const cards = document.querySelectorAll("#tiles .tile");
+
+cards.forEach((card, i)=>{
+
+card.style.animationDelay = (i * 0.08) + "s";
+
 });
 
-// Card animations
-function animateCards() {
-    const cards = document.querySelectorAll('#tiles .tile');
-    cards.forEach((card, i) => {
-        card.style.animationDelay = (i * 0.08) + 's';
-    });
 }
+
 animateCards();
 
-// ===== PAGE MANAGEMENT =====
-function openPage(page) {
-    const pages = ['home', 'messages', 'download', 'about'];
-    pages.forEach(p => {
-        document.getElementById(`page-${p}`).classList.remove('active');
-        document.getElementById(`btn-${p}`).classList.remove('active');
-    });
-    
-    document.getElementById(`page-${page}`).classList.add('active');
-    document.getElementById(`btn-${page}`).classList.add('active');
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    if (page === 'messages') {
-        loadMessagesPage();
-    }
+
+
+// pages
+
+function openPage(page){
+
+const pages = ["home","download","about"];
+
+pages.forEach(p=>{
+
+document.getElementById("page-"+p).classList.remove("active");
+
+document.getElementById("btn-"+p).classList.remove("active");
+
+});
+
+
+
+document.getElementById("page-"+page).classList.add("active");
+
+document.getElementById("btn-"+page).classList.add("active");
+
+
+
+window.scrollTo({top:0, behavior:"smooth"});
+
+
+
+// if go back to home -> replay cards animation
+
+if(page === "home"){
+
+const cards = document.querySelectorAll("#tiles .tile");
+
+cards.forEach(card=>{
+
+card.style.animation = "none";
+
+card.offsetHeight; // reset animation
+
+card.style.animation = "";
+
+});
+
+animateCards();
+
 }
 
-// ===== VENTRA MESSAGES =====
-function switchAuthTab(tab) {
-    document.querySelectorAll('.authTab').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('registerForm').style.display = 'none';
-    document.getElementById('verifyForm').style.display = 'none';
-    
-    if (tab === 'login') {
-        document.getElementById('loginForm').style.display = 'flex';
-    } else if (tab === 'register') {
-        document.getElementById('registerForm').style.display = 'flex';
-        updateAvatarPreview();
-    } else if (tab === 'verify') {
-        document.getElementById('verifyForm').style.display = 'flex';
-    }
 }
 
-function updateAvatarPreview() {
-    const username = document.getElementById('registerUsername').value || 'username';
-    const avatar = document.getElementById('avatarPreview');
-    avatar.textContent = username.charAt(0).toUpperCase();
-}
 
-function login() {
-    const username = document.getElementById('loginUsername').value.trim().toLowerCase();
-    if (!username) {
-        alert('Будь ласка, введіть нікнейм');
-        return;
-    }
-    
-    const user = VentraStorage.getUser(username);
-    if (!user) {
-        alert('Користувача не знайдено. Зареєструйтесь спочатку.');
-        return;
-    }
-    
-    if (user.banned) {
-        alert('🔒 Цей акаунт заблоковано.');
-        return;
-    }
-    
-    VentraStorage.currentUser = user;
-    VentraStorage.save();
-    loadMessagesPage();
-    alert(`👋 Вітаємо, @${username}!`);
-}
 
-function register() {
-    const username = document.getElementById('registerUsername').value.trim().toLowerCase();
-    if (!username) {
-        alert('Будь ласка, введіть нікнейм');
-        return;
-    }
-    
-    if (username.length > 20) {
-        alert('Нікнейм не повинен перевищувати 20 символів');
-        return;
-    }
-    
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-        alert('Нікнейм може містити тільки літери, цифри та знак підкреслення');
-        return;
-    }
-    
-    if (VentraStorage.getUser(username)) {
-        alert('Цей нікнейм вже зайнятий');
-        return;
-    }
-    
-    const newUser = {
-        username: username,
-        avatar: username.charAt(0).toUpperCase(),
-        isAdmin: false,
-        isVerified: false,
-        warnings: 0,
-        banned: false,
-        joinDate: new Date().toISOString(),
-        postsToday: 0,
-        lastPostDate: new Date().toDateString(),
-        posts: []
-    };
-    
-    VentraStorage.addUser(newUser);
-    VentraStorage.currentUser = newUser;
-    VentraStorage.save();
-    
-    loadMessagesPage();
-    alert(`🎉 Реєстрація успішна, @${username}!`);
-}
+// i18n
 
-function submitVerification() {
-    const username = document.getElementById('verifyUsername').value.trim().toLowerCase();
-    const type = document.getElementById('verifyType').value;
-    const link = document.getElementById('verifyLink').value.trim();
-    
-    if (!username || !link) {
-        alert('Будь ласка, заповніть всі поля');
-        return;
-    }
-    
-    const user = VentraStorage.getUser(username);
-    if (!user) {
-        alert('Користувача не знайдено');
-        return;
-    }
-    
-    if (user.isVerified) {
-        alert('Цей акаунт вже верифікований');
-        return;
-    }
-    
-    const request = {
-        id: Date.now(),
-        username: username,
-        type: type,
-        link: link,
-        status: 'pending',
-        date: new Date().toISOString(),
-        reviewedBy: null
-    };
-    
-    VentraStorage.verificationRequests.push(request);
-    VentraStorage.save();
-    
-    alert('✅ Запит на верифікацію відправлено! Адміністратор розгляне його найближчим часом.');
-    document.getElementById('verifyForm').reset();
-}
-
-function loadMessagesPage() {
-    VentraStorage.resetDailyPosts();
-    
-    const authSection = document.getElementById('authSection');
-    const createPostSection = document.getElementById('createPostSection');
-    const adminPanelBtn = document.getElementById('adminPanelBtn');
-    
-    if (VentraStorage.currentUser) {
-        authSection.style.display = 'none';
-        createPostSection.classList.add('active');
-        
-        // Show admin panel button for admins
-        if (VentraStorage.currentUser.isAdmin) {
-            adminPanelBtn.style.display = 'block';
-        } else {
-            adminPanelBtn.style.display = 'none';
-        }
-        
-        // Update post counter
-        const user = VentraStorage.getUser(VentraStorage.currentUser.username);
-        document.getElementById('postsToday').textContent = user ? user.postsToday : 0;
-        
-        // Load posts
-        renderPosts();
-    } else {
-        authSection.style.display = 'block';
-        createPostSection.classList.remove('active');
-        adminPanelBtn.style.display = 'none';
-        
-        // Show welcome message
-        const postsFeed = document.getElementById('postsFeed');
-        postsFeed.innerHTML = `
-            <div style="text-align: center; padding: 40px 20px;">
-                <h3 style="color: var(--accent2); margin-bottom: 15px;">VentraMessages</h3>
-                <p style="color: var(--muted); max-width: 500px; margin: 0 auto 25px auto;">
-                    Соціальна мережа VentraOS. Увійдіть або зареєструйтесь, щоб почати спілкування!
-                </p>
-                <div style="display: flex; gap: 15px; justify-content: center;">
-                    <button class="btn btnPrimary" onclick="switchAuthTab('login')">Увійти</button>
-                    <button class="btn" style="background: rgba(120,160,189,0.1); color: var(--accent2);" onclick="switchAuthTab('register')">Реєстрація</button>
-                </div>
-            </div>
-        `;
-    }
-}
-
-// ===== POST CREATION =====
-let selectedColor = '#0d1b2a';
-
-function selectColor(element) {
-    document.querySelectorAll('.colorOption').forEach(o => o.classList.remove('selected'));
-    element.classList.add('selected');
-    selectedColor = element.getAttribute('data-color');
-}
-
-function updateCharCount() {
-    const text = document.getElementById('postText').value;
-    document.getElementById('charCount').textContent = text.length;
-}
-
-function addHashtag(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        const input = document.getElementById('hashtagInput');
-        const hashtag = input.value.trim();
-        
-        if (hashtag) {
-            const container = document.getElementById('hashtagContainer');
-            const hashtags = container.querySelectorAll('.hashtag');
-            if (hashtags.length >= 20) {
-                alert('Максимум 20 хештегів');
-                return;
-            }
-            
-            const hashtagDiv = document.createElement('div');
-            hashtagDiv.className = 'hashtag';
-            hashtagDiv.innerHTML = `${hashtag} <span class="remove" onclick="removeHashtag(this)">×</span>`;
-            container.insertBefore(hashtagDiv, input);
-            input.value = '';
-        }
-    }
-}
-
-function removeHashtag(element) {
-    element.parentElement.remove();
-}
-
-function createPost() {
-    if (!VentraStorage.currentUser) {
-        alert('Будь ласка, увійдіть в систему');
-        return;
-    }
-    
-    const user = VentraStorage.getUser(VentraStorage.currentUser.username);
-    if (user.banned) {
-        alert('🔒 Ваш акаунт заблоковано');
-        return;
-    }
-    
-    if (user.postsToday >= 10 && !user.isAdmin) {
-        alert('⚠️ Ви досягли ліміту в 10 постів на день');
-        return;
-    }
-    
-    const text = document.getElementById('postText').value.trim();
-    if (!text) {
-        alert('Будь ласка, введіть текст поста');
-        return;
-    }
-    
-    // Get hashtags
-    const hashtagElements = document.getElementById('hashtagContainer').querySelectorAll('.hashtag');
-    const hashtags = Array.from(hashtagElements).map(el => {
-        return el.textContent.replace('×', '').trim();
-    });
-    
-    // Ensure required hashtags
-    const requiredHashtags = ['#viral', '#fyp', '#popylar', '#lyekser', '@VentraX.org'];
-    requiredHashtags.forEach(tag => {
-        if (!hashtags.includes(tag)) {
-            hashtags.push(tag);
-        }
-    });
-    
-    const post = {
-        id: Date.now(),
-        username: user.username,
-        text: text,
-        color: selectedColor,
-        hashtags: hashtags,
-        timestamp: new Date().toISOString(),
-        isVerified: user.isVerified,
-        isAdmin: user.isAdmin,
-        likes: 0,
-        comments: 0
-    };
-    
-    VentraStorage.addPost(post);
-    user.postsToday++;
-    user.lastPostDate = new Date().toDateString();
-    VentraStorage.save();
-    
-    // Reset form
-    document.getElementById('postText').value = '';
-    document.getElementById('charCount').textContent = '0';
-    document.getElementById('hashtagContainer').innerHTML = `
-        <div class="hashtag">#viral <span class="remove" onclick="removeHashtag(this)">×</span></div>
-        <div class="hashtag">#fyp <span class="remove" onclick="removeHashtag(this)">×</span></div>
-        <div class="hashtag">#popylar <span class="remove" onclick="removeHashtag(this)">×</span></div>
-        <div class="hashtag">#lyekser <span class="remove" onclick="removeHashtag(this)">×</span></div>
-        <div class="hashtag">@VentraX.org <span class="remove" onclick="removeHashtag(this)">×</span></div>
-        <input type="text" id="hashtagInput" placeholder="Додати хештег..." onkeypress="addHashtag(event)">
-    `;
-    document.getElementById('postsToday').textContent = user.postsToday;
-    
-    renderPosts();
-    alert('✅ Пост опубліковано!');
-}
-
-function renderPosts() {
-    const postsFeed = document.getElementById('postsFeed');
-    postsFeed.innerHTML = '';
-    
-    VentraStorage.posts.forEach(post => {
-        const user = VentraStorage.getUser(post.username);
-        if (user && user.banned) return;
-        
-        const postElement = document.createElement('div');
-        postElement.className = 'postCard';
-        postElement.innerHTML = `
-            <div class="postHeader">
-                <div class="userAvatar" style="background: ${getAvatarColor(post.username)}">${user?.avatar || post.username.charAt(0).toUpperCase()}</div>
-                <div class="userInfo">
-                    <div class="username">
-                        @${post.username}
-                        ${post.isVerified ? '<span class="verifiedBadge">✓</span>' : ''}
-                        ${post.isAdmin ? '<span class="adminBadge">ADMIN</span>' : ''}
-                        ${user?.warnings > 0 ? `<span style="background: rgba(255,152,0,0.15); color: var(--warning); padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; margin-left: 5px;">${user.warnings} попереджень</span>` : ''}
-                    </div>
-                    <div class="postTime">${formatTime(post.timestamp)} • ❤️ ${post.likes} • 💬 ${post.comments}</div>
-                </div>
-                ${VentraStorage.currentUser && VentraStorage.currentUser.isAdmin ? `
-                <div class="adminActions">
-                    <button class="adminBtn warnBtn" onclick="warnUser('${post.username}')">Попередження</button>
-                    <button class="adminBtn banBtn" onclick="banUser('${post.username}')">${user?.banned ? 'Розблокувати' : 'Заблокувати'}</button>
-                    <button class="adminBtn deleteBtn" onclick="deletePost(${post.id})">Видалити</button>
-                </div>
-                ` : ''}
-            </div>
-            <div class="postContent" style="color: ${post.color}">
-                ${post.text}
-            </div>
-            <div class="postHashtags">
-                ${post.hashtags.map(tag => `<div class="hashtag">${tag}</div>`).join('')}
-            </div>
-            <div style="display: flex; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.05);">
-                <button class="btn" style="padding: 8px 16px; background: rgba(0,0,0,0.03); font-size: 13px;" onclick="likePost(${post.id})">❤️ Подобається (${post.likes})</button>
-                <button class="btn" style="padding: 8px 16px; background: rgba(0,0,0,0.03); font-size: 13px;" onclick="commentOnPost(${post.id})">💬 Коментувати (${post.comments})</button>
-                <button class="btn" style="padding: 8px 16px; background: rgba(0,0,0,0.03); font-size: 13px;" onclick="sharePost(${post.id})">↪️ Поділитися</button>
-            </div>
-        `;
-        postsFeed.appendChild(postElement);
-    });
-}
-
-function getAvatarColor(username) {
-    const colors = ['#78A0BD', '#4CAF50', '#FF9800', '#9C27B0', '#F44336', '#2196F3'];
-    const index = username.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    return colors[index % colors.length];
-}
-
-function formatTime(timestamp) {
-    const now = new Date();
-    const postDate = new Date(timestamp);
-    const diffMs = now - postDate;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-    
-    if (diffMins < 1) return 'щойно';
-    if (diffMins < 60) return `${diffMins} хв. тому`;
-    if (diffHours < 24) return `${diffHours} год. тому`;
-    if (diffDays < 7) return `${diffDays} дн. тому`;
-    return postDate.toLocaleDateString('uk-UA');
-}
-
-// ===== POST INTERACTIONS =====
-function likePost(postId) {
-    const post = VentraStorage.posts.find(p => p.id === postId);
-    if (post) {
-        post.likes++;
-        VentraStorage.save();
-        renderPosts();
-    }
-}
-
-function commentOnPost(postId) {
-    const comment = prompt('Залишити коментар:');
-    if (comment && comment.trim()) {
-        const post = VentraStorage.posts.find(p => p.id === postId);
-        if (post) {
-            post.comments++;
-            VentraStorage.save();
-            renderPosts();
-            alert('💬 Коментар додано!');
-        }
-    }
-}
-
-function sharePost(postId) {
-    const post = VentraStorage.posts.find(p => p.id === postId);
-    if (post) {
-        navigator.clipboard.writeText(`Пост від @${post.username}: "${post.text.substring(0, 50)}..." #VentraMessages`);
-        alert('📋 Посилання скопійовано в буфер обміну!');
-    }
-}
-
-// ===== ADMIN FUNCTIONS =====
-let currentAdminAction = null;
-let currentAdminTarget = null;
-
-function openAdminPanel() {
-    if (!VentraStorage.currentUser || !VentraStorage.currentUser.isAdmin) {
-        alert('Доступ заборонено. Потрібні права адміністратора.');
-        return;
-    }
-    
-    const stats = {
-        totalUsers: VentraStorage.users.length,
-        totalPosts: VentraStorage.posts.length,
-        activeUsers: VentraStorage.users.filter(u => !u.banned).length,
-        bannedUsers: VentraStorage.users.filter(u => u.banned).length,
-        pendingVerifications: VentraStorage.verificationRequests.filter(r => r.status === 'pending').length,
-        totalLikes: VentraStorage.posts.reduce((sum, post) => sum + post.likes, 0)
-    };
-    
-    document.getElementById('modalTitle').textContent = '🔧 Адмін-панель VentraMessages';
-    document.getElementById('modalContent').innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 20px;">
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                <div style="background: rgba(120,160,189,0.1); padding: 15px; border-radius: 16px;">
-                    <div style="font-size: 24px; font-weight: 900; color: var(--accent2);">${stats.totalUsers}</div>
-                    <div style="font-size: 12px; color: var(--muted);">Користувачів</div>
-                </div>
-                <div style="background: rgba(76,175,80,0.1); padding: 15px; border-radius: 16px;">
-                    <div style="font-size: 24px; font-weight: 900; color: var(--success);">${stats.totalPosts}</div>
-                    <div style="font-size: 12px; color: var(--muted);">Постів</div>
-                </div>
-                <div style="background: rgba(255,152,0,0.1); padding: 15px; border-radius: 16px;">
-                    <div style="font-size: 24px; font-weight: 900; color: var(--warning);">${stats.pendingVerifications}</div>
-                    <div style="font-size: 12px; color: var(--muted);">Запитів</div>
-                </div>
-                <div style="background: rgba(244,67,54,0.1); padding: 15px; border-radius: 16px;">
-                    <div style="font-size: 24px; font-weight: 900; color: var(--danger);">${stats.bannedUsers}</div>
-                    <div style="font-size: 12px; color: var(--muted);">Забанено</div>
-                </div>
-            </div>
-            
-            <div>
-                <h4 style="margin: 0 0 10px 0; color: var(--text);">Керування користувачами</h4>
-                <div style="display: flex; flex-direction: column; gap: 10px; max-height: 200px; overflow-y: auto;">
-                    ${VentraStorage.users.map(user => `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.02); border-radius: 12px;">
-                            <div>
-                                <span style="font-weight: 700;">@${user.username}</span>
-                                ${user.isAdmin ? ' <span style="background: var(--danger); color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px;">ADMIN</span>' : ''}
-                                ${user.isVerified ? ' <span style="background: var(--success); color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px;">✓</span>' : ''}
-                                ${user.warnings > 0 ? ` <span style="background: var(--warning); color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px;">${user.warnings} поперед.</span>` : ''}
-                                ${user.banned ? ' <span style="background: var(--danger); color: white; padding: 2px 6px; border-radius: 8px; font-size: 10px;">BANNED</span>' : ''}
-                            </div>
-                            <div style="display: flex; gap: 5px;">
-                                ${!user.isAdmin ? `
-                                <button class="btn" style="padding: 5px 10px; font-size: 11px; background: rgba(255,152,0,0.1); color: var(--warning);" onclick="warnUser('${user.username}')">Поперед.</button>
-                                <button class="btn" style="padding: 5px 10px; font-size: 11px; background: rgba(244,67,54,0.1); color: var(--danger);" onclick="banUser('${user.username}')">${user.banned ? 'Розбл.' : 'Бан'}</button>
-                                ` : ''}
-                                <button class="btn" style="padding: 5px 10px; font-size: 11px; background: rgba(0,0,0,0.08);" onclick="viewUserDetails('${user.username}')">Деталі</button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            
-            <div>
-                <h4 style="margin: 0 0 10px 0; color: var(--text);">Запити на верифікацію</h4>
-                <div style="display: flex; flex-direction: column; gap: 10px; max-height: 150px; overflow-y: auto;">
-                    ${VentraStorage.verificationRequests.filter(r => r.status === 'pending').map(request => `
-                        <div style="padding: 10px; background: rgba(255,152,0,0.05); border-radius: 12px; border: 1px solid rgba(255,152,0,0.2);">
-                            <div style="font-weight: 700;">@${request.username}</div>
-                            <div style="font-size: 12px; color: var(--muted);">${request.type} • ${new Date(request.date).toLocaleDateString()}</div>
-                            <div style="font-size: 12px; margin-top: 5px;">
-                                <a href="${request.link}" target="_blank" style="color: var(--accent);">Переглянути докази</a>
-                            </div>
-                            <div style="display: flex; gap: 5px; margin-top: 10px;">
-                                <button class="btn" style="padding: 5px 10px; font-size: 11px; background: rgba(76,175,80,0.1); color: var(--success);" onclick="approveVerification(${request.id})">Підтвердити</button>
-                                <button class="btn" style="padding: 5px 10px; font-size: 11px; background: rgba(244,67,54,0.1); color: var(--danger);" onclick="rejectVerification(${request.id})">Відхилити</button>
-                            </div>
-                        </div>
-                    `).join('')}
-                    ${VentraStorage.verificationRequests.filter(r => r.status === 'pending').length === 0 ? 
-                        '<div style="text-align: center; padding: 20px; color: var(--muted);">Немає запитів на верифікацію</div>' : ''}
-                </div>
-            </div>
-            
-            <div>
-                <h4 style="margin: 0 0 10px 0; color: var(--text);">Швидкі дії</h4>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn" style="flex: 1; background: rgba(120,160,189,0.1); color: var(--accent2);" onclick="createAdminAccount()">➕ Створити адміна</button>
-                    <button class="btn" style="flex: 1; background: rgba(76,175,80,0.1); color: var(--success);" onclick="exportData()">📥 Експорт даних</button>
-                    <button class="btn" style="flex: 1; background: rgba(244,67,54,0.1); color: var(--danger);" onclick="clearAllData()">🗑️ Очистити все</button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.getElementById('modalConfirmBtn').style.display = 'none';
-    document.getElementById('adminModal').classList.add('active');
-}
-
-function warnUser(username) {
-    const user = VentraStorage.getUser(username);
-    if (!user || user.isAdmin) return;
-    
-    currentAdminAction = 'warn';
-    currentAdminTarget = username;
-    
-    document.getElementById('modalTitle').textContent = 'Виписати попередження';
-    document.getElementById('modalContent').innerHTML = `
-        <p>Видати попередження користувачу <strong>@${username}</strong>?</p>
-        <p>Поточні попередження: ${user.warnings}</p>
-        <p>Після 3 попереджень акаунт буде заблоковано автоматично.</p>
-        <div class="formGroup">
-            <label>Причина попередження:</label>
-            <textarea id="warnReason" placeholder="Введіть причину..." rows="3"></textarea>
-        </div>
-    `;
-    document.getElementById('modalConfirmBtn').style.display = 'block';
-    document.getElementById('modalConfirmBtn').textContent = 'Виписати попередження';
-    document.getElementById('adminModal').classList.add('active');
-}
-
-function banUser(username) {
-    const user = VentraStorage.getUser(username);
-    if (!user || user.isAdmin) return;
-    
-    currentAdminAction = 'ban';
-    currentAdminTarget = username;
-    
-    const action = user.banned ? 'розблокувати' : 'заблокувати';
-    
-    document.getElementById('modalTitle').textContent = user.banned ? 'Розблокувати акаунт' : 'Заблокувати акаунт';
-    document.getElementById('modalContent').innerHTML = `
-        <p>Ви дійсно хочете ${action} акаунт <strong>@${username}</strong>?</p>
-        ${!user.banned ? '<p>Користувач не зможе публікувати пости та входити в систему.</p>' : '<p>Користувач знову зможе користуватися системою.</p>'}
-        <div class="formGroup">
-            <label>Причина:</label>
-            <textarea id="banReason" placeholder="Введіть причину..." rows="3"></textarea>
-        </div>
-    `;
-    document.getElementById('modalConfirmBtn').style.display = 'block';
-    document.getElementById('modalConfirmBtn').textContent = user.banned ? 'Розблокувати' : 'Заблокувати';
-    document.getElementById('adminModal').classList.add('active');
-}
-
-function deletePost(postId) {
-    currentAdminAction = 'deletePost';
-    currentAdminTarget = postId;
-    
-    document.getElementById('modalTitle').textContent = 'Видалити пост';
-    document.getElementById('modalContent').innerHTML = `
-        <p>Ви дійсно хочете видалити цей пост?</p>
-        <p>Цю дію неможливо скасувати.</p>
-    `;
-    document.getElementById('modalConfirmBtn').style.display = 'block';
-    document.getElementById('modalConfirmBtn').textContent = 'Видалити';
-    document.getElementById('adminModal').classList.add('active');
-}
-
-function approveVerification(requestId) {
-    const request = VentraStorage.verificationRequests.find(r => r.id === requestId);
-    if (request) {
-        const user = VentraStorage.getUser(request.username);
-        if (user) {
-            user.isVerified = true;
-            request.status = 'approved';
-            request.reviewedBy = VentraStorage.currentUser.username;
-            VentraStorage.save();
-            alert(`✅ Користувач @${request.username} верифікований!`);
-            openAdminPanel();
-            renderPosts();
-        }
-    }
-}
-
-function rejectVerification(requestId) {
-    const request = VentraStorage.verificationRequests.find(r => r.id === requestId);
-    if (request) {
-        request.status = 'rejected';
-        request.reviewedBy = VentraStorage.currentUser.username;
-        VentraStorage.save();
-        alert(`❌ Запит на верифікацію від @${request.username} відхилено.`);
-        openAdminPanel();
-    }
-}
-
-function viewUserDetails(username) {
-    const user = VentraStorage.getUser(username);
-    if (!user) return;
-    
-    const userPosts = VentraStorage.posts.filter(p => p.username === username);
-    const totalLikes = userPosts.reduce((sum, post) => sum + post.likes, 0);
-    const totalComments = userPosts.reduce((sum, post) => sum + post.comments, 0);
-    
-    document.getElementById('modalTitle').textContent = `Деталі акаунта: @${username}`;
-    document.getElementById('modalContent').innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 15px;">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div class="userAvatar" style="width: 50px; height: 50px; font-size: 20px;">${user.avatar}</div>
-                <div>
-                    <div style="font-size: 18px; font-weight: 900;">@${user.username}</div>
-                    <div style="font-size: 12px; color: var(--muted);">Зареєстровано: ${new Date(user.joinDate).toLocaleDateString()}</div>
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.02); border-radius: 12px;">
-                    <div style="font-size: 20px; font-weight: 900;">${userPosts.length}</div>
-                    <div style="font-size: 11px; color: var(--muted);">Постів</div>
-                </div>
-                <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.02); border-radius: 12px;">
-                    <div style="font-size: 20px; font-weight: 900;">${totalLikes}</div>
-                    <div style="font-size: 11px; color: var(--muted);">Вподобань</div>
-                </div>
-                <div style="text-align: center; padding: 10px; background: rgba(0,0,0,0.02); border-radius: 12px;">
-                    <div style="font-size: 20px; font-weight: 900;">${totalComments}</div>
-                    <div style="font-size: 11px; color: var(--muted);">Коментарів</div>
-                </div>
-            </div>
-            
-            <div>
-                <div style="font-weight: 700; margin-bottom: 8px;">Статус:</div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    ${user.isAdmin ? '<span style="background: var(--danger); color: white; padding: 4px 10px; border-radius: 10px; font-size: 11px;">ADMIN</span>' : ''}
-                    ${user.isVerified ? '<span style="background: var(--success); color: white; padding: 4px 10px; border-radius: 10px; font-size: 11px;">VERIFIED</span>' : ''}
-                    ${user.banned ? '<span style="background: var(--danger); color: white; padding: 4px 10px; border-radius: 10px; font-size: 11px;">BANNED</span>' : ''}
-                    ${user.warnings > 0 ? `<span style="background: var(--warning); color: white; padding: 4px 10px; border-radius: 10px; font-size: 11px;">${user.warnings} ПОПЕРЕДЖЕНЬ</span>` : ''}
-                </div>
-            </div>
-            
-            <div>
-                <div style="font-weight: 700; margin-bottom: 8px;">Активність:</div>
-                <div style="font-size: 13px;">
-                    <div>Постів сьогодні: ${user.postsToday}/10</div>
-                    <div>Останній пост: ${user.lastPostDate === new Date().toDateString() ? 'сьогодні' : user.lastPostDate}</div>
-                </div>
-            </div>
-        </div>
-    `;
-    document.getElementById('modalConfirmBtn').style.display = 'none';
-    document.getElementById('adminModal').classList.add('active');
-}
-
-function confirmModalAction() {
-    const modal = document.getElementById('adminModal');
-    
-    if (currentAdminAction === 'warn') {
-        const user = VentraStorage.getUser(currentAdminTarget);
-        if (user) {
-            user.warnings++;
-            if (user.warnings >= 3) {
-                user.banned = true;
-                alert(`⚠️ Користувач @${currentAdminTarget} отримав 3 попередження і був заблокований.`);
-            } else {
-                alert(`⚠️ Користувач @${currentAdminTarget} отримав попередження. Загальна кількість: ${user.warnings}`);
-            }
-            VentraStorage.save();
-            renderPosts();
-        }
-    } else if (currentAdminAction === 'ban') {
-        const user = VentraStorage.getUser(currentAdminTarget);
-        if (user) {
-            user.banned = !user.banned;
-            alert(`🔒 Акаунт @${currentAdminTarget} ${user.banned ? 'заблоковано' : 'розблоковано'}`);
-            VentraStorage.save();
-            renderPosts();
-        }
-    } else if (currentAdminAction === 'deletePost') {
-        VentraStorage.posts = VentraStorage.posts.filter(p => p.id !== currentAdminTarget);
-        VentraStorage.save();
-        alert('🗑️ Пост видалено');
-        renderPosts();
-    }
-    
-    closeModal();
-}
-
-function closeModal() {
-    document.getElementById('adminModal').classList.remove('active');
-    currentAdminAction = null;
-    currentAdminTarget = null;
-}
-
-function createAdminAccount() {
-    const username = prompt('Введіть нікнейм для нового адміна:');
-    if (!username) return;
-    
-    if (VentraStorage.getUser(username)) {
-        alert('Користувач вже існує');
-        return;
-    }
-    
-    const newAdmin = {
-        username: username,
-        avatar: username.charAt(0).toUpperCase(),
-        isAdmin: true,
-        isVerified: true,
-        warnings: 0,
-        banned: false,
-        joinDate: new Date().toISOString(),
-        postsToday: 0,
-        lastPostDate: new Date().toDateString(),
-        posts: []
-    };
-    
-    VentraStorage.addUser(newAdmin);
-    alert(`✅ Адмін-акаунт @${username} створено!`);
-    openAdminPanel();
-}
-
-function exportData() {
-    const data = {
-        users: VentraStorage.users,
-        posts: VentraStorage.posts,
-        verificationRequests: VentraStorage.verificationRequests,
-        exportedAt: new Date().toISOString(),
-        version: '1.0'
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `ventra_backup_${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    alert('📥 Дані експортовано у файл JSON!');
-}
-
-function clearAllData() {
-    if (confirm('⚠️ Ця дія видалить ВСІ дані (користувачів, пости, запити). Продовжити?')) {
-        localStorage.clear();
-        location.reload();
-    }
-}
-
-// ===== i18n =====
 const dict = {
-    uk: {
-        nav_home: "Головна",
-        nav_messages: "VentraMessages",
-        nav_download: "Завантаження",
-        nav_about: "About",
-        hero_sub: "Сучасна операційна система у стилі WebOS. Дуже красива, швидка та зручна для кожного.",
-        hero_btn: "Завантажити",
-        hero_btn2: "Про студію",
-        cards_title: "Можливості VentraOS",
-        c1_t: "VentraUI",
-        c1_d: "Дуже сучасний дизайн з плавними анімаціями та красивими елементами.",
-        c2_t: "VentraAI",
-        c2_d: "Розумні функції та майбутні інструменти прямо з коробки.",
-        c3_t: "Ventra Browser",
-        c3_d: "Легкий вбудований браузер для швидкого доступу до інтернету.",
-        c4_t: "Проста установка",
-        c4_d: "Мінімум налаштувань — максимум комфорту. Все інтуїтивно та швидко.",
-        c5_t: "Мультифункціональність",
-        c5_d: "VentraOS створена для навчання, роботи та творчості в одному місці.",
-        dl_title: "Завантаження",
-        dl_sub: "Тут буде офіційний інсталятор VentraOS.",
-        dl_badge: "Очікується реліз",
-        dl_not: "Not available, please wait for release",
-        dl_rel: "Release in 05.02.2026",
-        ab_title: "Ventra Tech",
-        ab_text: "Ventra Tech — студія, яка створює красиві та сучасні цифрові продукти. VentraOS — наш головний проєкт, зроблений з любов'ю до дизайну, швидкості та простоти.",
-        ab_text2: "Ми хочемо, щоб VentraOS виглядала максимально стильно та працювала швидко на будь-якому пристрої."
-    },
-    en: {
-        nav_home: "Home",
-        nav_messages: "VentraMessages",
-        nav_download: "Download",
-        nav_about: "About",
-        hero_sub: "A modern operating system in WebOS style. Beautiful, fast, and easy for everyone.",
-        hero_btn: "Download",
-        hero_btn2: "About studio",
-        cards_title: "VentraOS Features",
-        c1_t: "VentraUI",
-        c1_d: "A modern interface with smooth animations and beautiful elements.",
-        c2_t: "VentraAI",
-        c2_d: "Smart features and future tools right out of the box.",
-        c3_t: "Ventra Browser",
-        c3_d: "A lightweight built-in browser for quick internet access.",
-        c4_t: "Easy install",
-        c4_d: "Minimal setup — maximum comfort. Simple and fast.",
-        c5_t: "Multifunctional",
-        c5_d: "VentraOS is made for learning, work, and creativity in one place.",
-        dl_title: "Download",
-        dl_sub: "The official VentraOS installer will be here.",
-        dl_badge: "Release soon",
-        dl_not: "Not available, please wait for release",
-        dl_rel: "Release in 05.02.2026",
-        ab_title: "Ventra Tech",
-        ab_text: "Ventra Tech is a studio that creates beautiful and modern digital products. VentraOS is our main project made with love for design, speed, and simplicity.",
-        ab_text2: "We want VentraOS to look максимально stylish and work fast on any device."
-    }
+
+uk: {
+
+nav_home: "Головна",
+
+nav_download: "Завантаження",
+
+nav_about: "About",
+
+
+
+hero_sub: "Сучасна операційна система у стилі WebOS. Дуже красива, швидка та зручна для кожного.",
+
+hero_btn: "Завантажити",
+
+hero_btn2: "Про студію",
+
+
+
+cards_title: "Можливості VentraOS",
+
+c1_t: "VentraUI",
+
+c1_d: "Дуже сучасний дизайн з плавними анімаціями та красивими елементами.",
+
+c2_t: "VentraAI",
+
+c2_d: "Розумні функції та майбутні інструменти прямо з коробки.",
+
+c3_t: "Ventra Browser",
+
+c3_d: "Легкий вбудований браузер для швидкого доступу до інтернету.",
+
+c4_t: "Проста установка",
+
+c4_d: "Мінімум налаштувань — максимум комфорту. Все інтуїтивно та швидко.",
+
+c5_t: "Мультифункціональність",
+
+c5_d: "VentraOS створена для навчання, роботи та творчості в одному місці.",
+
+
+
+dl_title: "Завантаження",
+
+dl_sub: "Тут буде офіційний інсталятор VentraOS.",
+
+dl_badge: "Очікується реліз",
+
+dl_not: "Not aviable, please wait a release moment.",
+
+dl_rel: "Release in 05.02.2026",
+
+
+
+ab_title: "Ventra Tech",
+
+ab_text: "Ventra Tech — студія, яка створює красиві та сучасні цифрові продукти. VentraOS — наш головний проєкт, зроблений з любов’ю до дизайну, швидкості та простоти.",
+
+ab_text2: "Ми хочемо, щоб VentraOS виглядала максимально стильно та працювала швидко на будь-якому пристрої."
+
+},
+
+
+
+en: {
+
+nav_home: "Home",
+
+nav_download: "Download",
+
+nav_about: "About",
+
+
+
+hero_sub: "A modern operating system in WebOS style. Beautiful, fast, and easy for everyone.",
+
+hero_btn: "Download",
+
+hero_btn2: "About studio",
+
+
+
+cards_title: "VentraOS Features",
+
+c1_t: "VentraUI",
+
+c1_d: "A modern interface with smooth animations and beautiful elements.",
+
+c2_t: "VentraAI",
+
+c2_d: "Smart features and future tools right out of the box.",
+
+c3_t: "Ventra Browser",
+
+c3_d: "A lightweight built-in browser for quick internet access.",
+
+c4_t: "Easy install",
+
+c4_d: "Minimal setup — maximum comfort. Simple and fast.",
+
+c5_t: "Multifunctional",
+
+c5_d: "VentraOS is made for learning, work, and creativity in one place.",
+
+
+
+dl_title: "Download",
+
+dl_sub: "The official VentraOS installer will be here.",
+
+dl_badge: "Release soon",
+
+dl_not: "Not aviable, please wait a release moment.",
+
+dl_rel: "Release in 05.02.2026",
+
+
+
+ab_title: "Ventra Tech",
+
+ab_text: "Ventra Tech is a studio that creates beautiful and modern digital products. VentraOS is our main project made with love for design, speed, and simplicity.",
+
+ab_text2: "We want VentraOS to look максимально стильна and work fast on any device."
+
+}
+
 };
 
-function setLang(lang) {
-    document.getElementById("langUA").classList.remove("active");
-    document.getElementById("langEN").classList.remove("active");
-    
-    if (lang === "uk") document.getElementById("langUA").classList.add("active");
-    if (lang === "en") document.getElementById("langEN").classList.add("active");
-    
-    document.documentElement.lang = lang;
-    
-    document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        if (dict[lang] && dict[lang][key]) el.textContent = dict[lang][key];
-    });
+
+
+function setLang(lang){
+
+document.getElementById("langUA").classList.remove("active");
+
+document.getElementById("langEN").classList.remove("active");
+
+
+
+if(lang === "uk") document.getElementById("langUA").classList.add("active");
+
+if(lang === "en") document.getElementById("langEN").classList.add("active");
+
+
+
+document.documentElement.lang = lang;
+
+
+
+document.querySelectorAll("[data-i18n]").forEach(el=>{
+
+const key = el.getAttribute("data-i18n");
+
+if(dict[lang] && dict[lang][key]) el.textContent = dict[lang][key];
+
+});
+
 }
 
-// Initialize
-VentraStorage.save();
-VentraStorage.resetDailyPosts();
 </script>
+
+
+
 </body>
+
 </html>
