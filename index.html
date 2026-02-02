@@ -1,251 +1,274 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <title>VentraOS - CCode Platform</title>
-    <style>
-        :root {
-            --accent: #78A0BD;
-            --bg-gradient: linear-gradient(135deg, #e0eafc, #cfdef3);
-            --window-bg: #f0f4f8;
-            --editor-bg: #ffffff;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VentraOS - Ecosystem</title>
 
-        body, html {
-            margin: 0; padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient);
-            height: 100vh;
-            overflow: hidden;
-        }
+  <style>
+    :root{
+      --bg: #f4f7fb;
+      --card: rgba(255,255,255,0.9);
+      --text: #0d1b2a;
+      --muted: rgba(13,27,42,0.65);
+      --accent: #78A0BD;
+      --accent2: #5f8fae;
+      --shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+      --code-bg: #f8fbff;
+    }
 
-        /* --- HEADER & NAV --- */
-        header {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 10px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-        }
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
 
-        .nav-links button {
-            background: none; border: none;
-            padding: 8px 15px; cursor: pointer;
-            font-weight: 600; color: #555;
-            transition: 0.3s;
-        }
+    /* ===== HEADER ===== */
+    header{
+      position: fixed;
+      top:0; left:0;
+      width:100%;
+      z-index: 999;
+      height: 68px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      padding: 0 22px;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(35px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
 
-        .nav-links button.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+    .brand{ display:flex; align-items:center; gap: 12px; text-decoration:none; color: var(--text); }
+    .logo{
+      width: 38px; height: 38px; border-radius: 12px;
+      display:grid; place-items:center;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 5px 15px rgba(120,160,189,0.4);
+    }
 
-        /* --- AUTH MODAL --- */
-        #auth-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
-            display: flex; justify-content: center; align-items: center; z-index: 1000;
-        }
+    nav{ display:flex; gap: 10px; align-items:center; }
+    .navBtn{
+      border: none; background: rgba(0,0,0,0.04);
+      padding: 8px 16px; border-radius: 12px;
+      cursor:pointer; transition: 0.3s;
+    }
+    .navBtn.active{ background: var(--accent); color: white; }
+    .navBtn.auth-only{ display: none; } /* Сховано для гостей */
 
-        .auth-card {
-            background: white; padding: 30px; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 320px; text-align: center;
-        }
+    /* ===== PAGES ===== */
+    .page{ display:none; padding-top: 80px; min-height: 100vh; animation: fadeIn 0.4s ease; }
+    .page.active{ display:block; }
+    @keyframes fadeIn{ from{opacity:0; transform: translateY(10px);} to{opacity:1; transform: translateY(0);} }
 
-        .auth-card input {
-            width: 100%; padding: 12px; margin: 10px 0;
-            border-radius: 10px; border: 1px solid #ddd; outline: none;
-        }
+    /* ===== AUTH FORM ===== */
+    .auth-container{
+      max-width: 400px; margin: 50px auto;
+      background: white; padding: 30px;
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .auth-container input{
+      width: 100%; padding: 12px; margin: 10px 0;
+      border-radius: 10px; border: 1px solid #ddd;
+    }
+    .btn-main{
+      width: 100%; padding: 12px; border: none;
+      background: var(--accent2); color: white;
+      border-radius: 12px; cursor: pointer; font-weight: bold;
+    }
 
-        .auth-card button {
-            width: 100%; padding: 12px; border: none;
-            background: var(--accent); color: white;
-            border-radius: 10px; cursor: pointer; font-weight: bold;
-        }
+    /* ===== CCODE INTERFACE (FROM PHOTO) ===== */
+    .ccode-window{
+      width: 95%; max-width: 1100px; margin: 0 auto;
+      background: #e1e9f0; border-radius: 15px;
+      display: flex; flex-direction: column; overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+      border: 1px solid #fff;
+    }
+    .ccode-toolbar{
+      padding: 10px 20px; display: flex; gap: 10px; align-items: center;
+      background: linear-gradient(to bottom, #f0f4f8, #e1e9f0);
+    }
+    .ccode-main{ display: grid; grid-template-columns: 1fr 280px; gap: 15px; padding: 15px; }
+    .ccode-editor{
+      background: white; border-radius: 15px; padding: 20px;
+      min-height: 400px; font-family: 'Courier New', monospace;
+      border: none; outline: none; resize: none; width: 100%;
+    }
+    .ccode-sidebar{ display: flex; flex-direction: column; gap: 15px; }
+    .side-box{ background: white; border-radius: 15px; padding: 15px; min-height: 150px; }
+    .file-item{ display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 8px; }
 
-        /* --- CCODE INTERFACE (REPLICATING YOUR IMAGE) --- */
-        #page-ccode {
-            display: none; height: calc(100vh - 60px); padding: 20px;
-        }
+    .user-info{ font-weight: bold; color: var(--accent2); margin-right: 10px; }
 
-        .ccode-container {
-            background: #cbd9e6; border-radius: 15px;
-            height: 100%; display: flex; flex-direction: column;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.4);
-        }
-
-        .ccode-header {
-            padding: 10px 15px; display: flex; align-items: center; gap: 10px;
-            background: transparent;
-        }
-
-        .btn-blue { background: #0078d4; color: white; border: none; padding: 6px 15px; border-radius: 15px; cursor: pointer;}
-        .tab { background: white; padding: 5px 15px; border-radius: 8px; font-size: 13px; border: 1px solid #ddd;}
-
-        .ccode-body {
-            display: grid; grid-template-columns: 1fr 280px; gap: 15px;
-            padding: 15px; flex-grow: 1; overflow: hidden;
-        }
-
-        .editor-area {
-            background: white; border-radius: 18px; padding: 20px;
-            font-family: 'Consolas', monospace; font-size: 14px;
-            border: none; resize: none; outline: none;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
-        }
-
-        .sidebar-panel { display: flex; flex-direction: column; gap: 15px; }
-
-        .side-card {
-            background: rgba(255,255,255,0.7);
-            border-radius: 18px; padding: 15px; flex-grow: 1;
-        }
-
-        .file-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 14px; color: #333; }
-        .icon { width: 24px; height: 24px; background: #eee; border-radius: 5px; }
-
-        .output-panel {
-            background: rgba(255,255,255,0.5); height: 120px;
-            border-radius: 18px; padding: 15px; font-size: 12px; color: #666;
-            display: flex; align-items: flex-end; justify-content: center;
-        }
-
-        .hidden { display: none !important; }
-    </style>
+    footer{ text-align: center; padding: 20px; opacity: 0.5; }
+  </style>
 </head>
 <body>
 
-<header>
-    <div style="display:flex; align-items:center; gap:10px;">
-        <div style="background:var(--accent); width:30px; height:30px; border-radius:8px;"></div>
-        <b style="font-size:20px;">VentraOS</b>
+  <header>
+    <div class="brand">
+      <div class="logo">V</div>
+      <span style="font-weight:900">VentraOS</span>
     </div>
-    <div class="nav-links">
-        <button id="btn-home" class="active" onclick="switchPage('home')">Головна</button>
-        <button id="btn-ccode-nav" onclick="switchPage('ccode')">CCode</button>
-    </div>
-    <div id="user-info">
-        <button onclick="document.getElementById('auth-overlay').classList.remove('hidden')">Увійти</button>
-    </div>
-</header>
+    <nav>
+      <button class="navBtn active" onclick="showPage('home')">Головна</button>
+      <button class="navBtn auth-only" id="nav-ccode" onclick="showPage('ccode')">CCode</button>
+      <span id="user-display" class="user-info"></span>
+      <button class="navBtn" id="auth-nav-btn" onclick="showPage('auth')">Увійти</button>
+      <button class="navBtn" id="logout-btn" style="display:none" onclick="logout()">Вихід</button>
+    </nav>
+  </header>
 
-<div id="auth-overlay" class="hidden">
-    <div class="auth-card">
-        <h2 id="auth-title">Вхід</h2>
-        <input type="text" id="username" placeholder="Логін">
-        <input type="password" id="password" placeholder="Пароль">
-        <button onclick="handleAuth()">Продовжити</button>
-        <p style="font-size:12px; cursor:pointer; color:var(--accent); margin-top:15px;" onclick="toggleAuthMode()" id="auth-toggle">Немає акаунта? Реєстрація</p>
+  <main class="page active" id="page-home">
+    <div style="text-align:center; padding: 50px;">
+      <h1>Ласкаво просимо до VentraOS</h1>
+      <p>Ваш персональний робочий простір у хмарі.</p>
     </div>
-</div>
+  </main>
 
-<main id="page-home" style="text-align:center; padding-top:100px;">
-    <h1>Ласкаво просимо до VentraOS</h1>
-    <p>Увійдіть, щоб отримати доступ до вашого середовища розробки CCode.</p>
-</main>
+  <main class="page" id="page-auth">
+    <div class="auth-container">
+      <h2 id="auth-title">Авторизація</h2>
+      <input type="text" id="username" placeholder="Логін">
+      <input type="password" id="password" placeholder="Пароль">
+      <button class="btn-main" onclick="handleAuth()">Продовжити</button>
+      <p style="font-size: 12px; margin-top: 15px; cursor: pointer; color: blue;" onclick="toggleAuthMode()" id="auth-toggle">Немає акаунта? Реєстрація</p>
+    </div>
+  </main>
 
-<main id="page-ccode">
-    <div class="ccode-container">
-        <div class="ccode-header">
-            <span style="font-size:20px; margin-right:15px;">← →</span>
-            <button class="btn-blue" onclick="saveData()">Сохранить</button>
-            <button class="tab">Отладка</button>
-            <button class="tab">Открыть путь</button>
-            <button class="btn-blue" style="background:#28a745;">Запустить</button>
-            <div style="flex-grow:1"></div>
-            <button class="tab">Настройки</button>
+  <main class="page" id="page-ccode">
+    <div class="ccode-window">
+      <div class="ccode-toolbar">
+        <span style="font-weight: bold; margin-right: 20px;">CCode</span>
+        <button onclick="saveCode()" style="background:#0078d4; color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer;">Зберегти</button>
+        <button style="background:white; border:1px solid #ccc; padding:5px 15px; border-radius:5px;">Запустити</button>
+      </div>
+      
+      <div class="ccode-main">
+        <textarea id="code-editor" class="ccode-editor" placeholder="Введіть ваш код тут..."></textarea>
+        
+        <div class="ccode-sidebar">
+          <div class="side-box">
+            <b style="font-size: 14px; display:block; margin-bottom:10px;">Приложения</b>
+            <div class="file-item">📄 mainpage.cyc</div>
+            <div class="file-item">📄 maininterface.cui</div>
+            <div class="file-item">📦 app.coldapp</div>
+          </div>
+          <div class="side-box">
+            <b style="font-size: 12px; color: #888;">Output</b>
+            <div id="console-output" style="font-size: 12px; margin-top: 10px; color: #444;">Ready...</div>
+          </div>
         </div>
-        <div style="padding-left:15px; display:flex; gap:5px;">
-            <div class="tab" style="border-bottom:none; border-radius:8px 8px 0 0;">mainpage.cyc</div>
-            <div class="tab" style="border-bottom:none; border-radius:8px 8px 0 0; background:rgba(255,255,255,0.4)">maininterface.cui</div>
-        </div>
-        <div class="ccode-body">
-            <textarea id="editor" class="editor-area"></textarea>
-            
-            <div class="sidebar-panel">
-                <div class="side-card">
-                    <b style="display:block; margin-bottom:15px;">Приложения</b>
-                    <div class="file-item"><div class="icon"></div> mainpage.cyc</div>
-                    <div class="file-item"><div class="icon"></div> maininterface.cui</div>
-                    <div class="file-item"><div class="icon"></div> app.coldapp</div>
-                </div>
-                <div class="output-panel">Output</div>
-            </div>
-        </div>
+      </div>
     </div>
-</main>
+  </main>
 
-<script>
-    let users = JSON.parse(localStorage.getItem('ventra_users')) || {};
-    let currentUser = localStorage.getItem('ventra_current');
-    let isRegister = false;
+  <footer>© 2026 VentraOS • Powered by Ventra Tech</footer>
 
-    const defaultCode = `import system.var = system\nimport gui.screen = surface\n\nproject(\nuse.maininterface.cui()\nuse.system\n)\n\nint(\nconsole.log-"App Started Secfully"-\nInt.guiscreen = span="TextButton"\nInt.guiscreen = spawn=:"Set a model":\nInt.guiscreen = span:{"Spawn" if click, spawn "3d_cube"}\nconsole.log-"Spawned Secfully!"\n)`;
+  <script>
+    let currentUser = JSON.parse(localStorage.getItem('ventra_session')) || null;
+    let isRegisterMode = false;
 
+    // --- Навігація ---
+    function showPage(pageId) {
+      if (pageId === 'ccode' && !currentUser) {
+        alert("Будь ласка, спочатку увійдіть в систему!");
+        showPage('auth');
+        return;
+      }
+
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + pageId).classList.add('active');
+      
+      document.querySelectorAll('.navBtn').forEach(b => b.classList.remove('active'));
+      // Підсвітка кнопки...
+    }
+
+    // --- Авторизація ---
     function toggleAuthMode() {
-        isRegister = !isRegister;
-        document.getElementById('auth-title').innerText = isRegister ? "Реєстрація" : "Вхід";
-        document.getElementById('auth-toggle').innerText = isRegister ? "Вже є акаунт? Увійти" : "Немає акаунта? Реєстрація";
+      isRegisterMode = !isRegisterMode;
+      document.getElementById('auth-title').innerText = isRegisterMode ? "Реєстрація" : "Авторизація";
+      document.getElementById('auth-toggle').innerText = isRegisterMode ? "Вже є акаунт? Увійти" : "Немає акаунта? Реєстрація";
     }
 
     function handleAuth() {
-        const u = document.getElementById('username').value;
-        const p = document.getElementById('password').value;
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
 
-        if(!u || !p) return alert("Заповніть усі поля!");
+      if (!user || !pass) return alert("Заповніть поля!");
 
-        if(isRegister) {
-            if(users[u]) return alert("Користувач вже існує!");
-            users[u] = { password: p, code: defaultCode };
-            localStorage.setItem('ventra_users', JSON.stringify(users));
-            alert("Акаунт створено!");
-            toggleAuthMode();
+      let users = JSON.parse(localStorage.getItem('ventra_users')) || {};
+
+      if (isRegisterMode) {
+        if (users[user]) return alert("Користувач вже існує!");
+        users[user] = { password: pass, code: "// Почніть писати код тут..." };
+        localStorage.setItem('ventra_users', JSON.stringify(users));
+        alert("Реєстрація успішна!");
+        toggleAuthMode();
+      } else {
+        if (users[user] && users[user].password === pass) {
+          login(user);
         } else {
-            if(users[u] && users[u].password === p) {
-                currentUser = u;
-                localStorage.setItem('ventra_current', u);
-                initSession();
-            } else {
-                alert("Невірні дані!");
-            }
+          alert("Невірний логін або пароль!");
         }
+      }
     }
 
-    function initSession() {
-        if(!currentUser) return;
-        document.getElementById('auth-overlay').classList.add('hidden');
-        document.getElementById('user-info').innerHTML = `<span>${currentUser}</span> <button onclick="logout()">Вихід</button>`;
-        document.getElementById('editor').value = users[currentUser].code;
-        switchPage('ccode');
+    function login(username) {
+      currentUser = username;
+      localStorage.setItem('ventra_session', JSON.stringify(currentUser));
+      updateUI();
+      showPage('home');
     }
 
     function logout() {
-        localStorage.removeItem('ventra_current');
-        location.reload();
+      currentUser = null;
+      localStorage.removeItem('ventra_session');
+      updateUI();
+      showPage('home');
     }
 
-    function switchPage(page) {
-        if(page === 'ccode' && !currentUser) {
-            document.getElementById('auth-overlay').classList.remove('hidden');
-            return;
-        }
-        document.getElementById('page-home').style.display = (page === 'home') ? 'block' : 'none';
-        document.getElementById('page-ccode').style.display = (page === 'ccode') ? 'block' : 'none';
+    function updateUI() {
+      const authBtn = document.getElementById('auth-nav-btn');
+      const logoutBtn = document.getElementById('logout-btn');
+      const userDisp = document.getElementById('user-display');
+      const ccodeBtn = document.getElementById('nav-ccode');
+
+      if (currentUser) {
+        authBtn.style.display = 'none';
+        logoutBtn.style.display = 'block';
+        ccodeBtn.style.display = 'block';
+        userDisp.innerText = "Привіт, " + currentUser;
         
-        document.getElementById('btn-home').classList.toggle('active', page === 'home');
-        document.getElementById('btn-ccode-nav').classList.toggle('active', page === 'ccode');
+        // Завантажуємо код користувача
+        let users = JSON.parse(localStorage.getItem('ventra_users'));
+        document.getElementById('code-editor').value = users[currentUser].code || "";
+      } else {
+        authBtn.style.display = 'block';
+        logoutBtn.style.display = 'none';
+        ccodeBtn.style.display = 'none';
+        userDisp.innerText = "";
+      }
     }
 
-    function saveData() {
-        if(!currentUser) return;
-        users[currentUser].code = document.getElementById('editor').value;
-        localStorage.setItem('ventra_users', JSON.stringify(users));
-        alert("Дані збережені в системі!");
+    // --- CCode Логіка ---
+    function saveCode() {
+      if (!currentUser) return;
+      let users = JSON.parse(localStorage.getItem('ventra_users'));
+      users[currentUser].code = document.getElementById('code-editor').value;
+      localStorage.setItem('ventra_users', JSON.stringify(users));
+      
+      document.getElementById('console-output').innerText = "Збережено успішно о " + new Date().toLocaleTimeString();
     }
 
-    // При завантаженні перевіряємо чи є сесія
-    if(currentUser) initSession();
-</script>
-
+    // Ініціалізація при завантаженні
+    window.onload = updateUI;
+  </script>
 </body>
 </html>
