@@ -1,633 +1,251 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VentraOS</title>
+    <meta charset="UTF-8">
+    <title>VentraOS - CCode Platform</title>
+    <style>
+        :root {
+            --accent: #78A0BD;
+            --bg-gradient: linear-gradient(135deg, #e0eafc, #cfdef3);
+            --window-bg: #f0f4f8;
+            --editor-bg: #ffffff;
+        }
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,100..1000&display=swap');
-    
-    @font-face {
-      font-family: 'Geist';
-      src: url('https://assets.codepen.io/165585/Geist-Medium.woff2') format('woff2');
-      font-display: swap;
-    }
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    :root {
-      --c-glass: #bbbbbc;
-      --c-light: #fff;
-      --c-dark: #000;
-      --c-content: #224;
-      --c-action: #0052f5;
-      --c-bg: #E8E8E9;
-      --glass-reflex-dark: 1;
-      --glass-reflex-light: 1;
-      --saturation: 150%;
-    }
+        /* --- HEADER & NAV --- */
+        header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 10px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
 
-    /* THEMES */
-    body:has(input[value="dark"]:checked) {
-      --c-bg: #1b1b1d; --c-content: #e1e1e1; --c-action: #03d5ff;
-    }
-    body:has(input[value="dim"]:checked) {
-      --c-bg: #152433; --c-content: #d5dbe2; --c-action: #ff48a9;
-    }
+        .nav-links button {
+            background: none; border: none;
+            padding: 8px 15px; cursor: pointer;
+            font-weight: 600; color: #555;
+            transition: 0.3s;
+        }
 
-    body {
-      margin: 0;
-      font-family: "DM Sans", sans-serif;
-      background: var(--c-bg);
-      color: var(--c-content);
-      transition: background 400ms cubic-bezier(1, 0, 0.4, 1);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-bottom: 150px;
-      overflow-x: hidden;
-    }
+        .nav-links button.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
 
-    /* LIQUID GLASS EFFECTS */
-    .liquidGlass-wrapper {
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 6px 6px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2);
-    }
+        /* --- AUTH MODAL --- */
+        #auth-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
 
-    body:not(.no-liquid-glass) .liquidGlass-wrapper {
-      backdrop-filter: blur(8px) url(#liquid-glass);
-      -webkit-backdrop-filter: blur(8px) url(#liquid-glass);
-    }
+        .auth-card {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 320px; text-align: center;
+        }
 
-    /* SWITCHER */
-    .switcher {
-      position: fixed;
-      top: 40px;
-      z-index: 100;
-      display: flex;
-      gap: 8px;
-      width: 244px;
-      padding: 8px;
-      border-radius: 99em;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
+        .auth-card input {
+            width: 100%; padding: 12px; margin: 10px 0;
+            border-radius: 10px; border: 1px solid #ddd; outline: none;
+        }
 
-    .switcher__option {
-      flex: 1;
-      text-align: center;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: bold;
-      z-index: 5;
-      padding: 8px 0;
-      border-radius: 99em;
-      transition: background 0.3s;
-    }
+        .auth-card button {
+            width: 100%; padding: 12px; border: none;
+            background: var(--accent); color: white;
+            border-radius: 10px; cursor: pointer; font-weight: bold;
+        }
 
-    .switcher__option:hover {
-      background: rgba(255,255,255,0.2);
-    }
+        /* --- CCODE INTERFACE (REPLICATING YOUR IMAGE) --- */
+        #page-ccode {
+            display: none; height: calc(100vh - 60px); padding: 20px;
+        }
 
-    .switcher input { display: none; }
+        .ccode-container {
+            background: #cbd9e6; border-radius: 15px;
+            height: 100%; display: flex; flex-direction: column;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.4);
+        }
 
-    /* YOUR GEIST BUTTON */
-    .geist-btn {
-      appearance: none;
-      border: none;
-      cursor: pointer;
-      background-image: linear-gradient(to bottom right, #3FFC6A, #591B98, #432366);
-      font: 16px/24px 'Geist';
-      color: white;
-      padding: 10px 24px;
-      border-radius: 10px;
-      box-shadow: 0px 4px 12px -3px rgba(9, 24, 85, 0.95);
-      position: relative;
-      transition: 0.2s;
-      font-weight: 500;
-    }
+        .ccode-header {
+            padding: 10px 15px; display: flex; align-items: center; gap: 10px;
+            background: transparent;
+        }
 
-    .geist-btn:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.1);
-    }
+        .btn-blue { background: #0078d4; color: white; border: none; padding: 6px 15px; border-radius: 15px; cursor: pointer;}
+        .tab { background: white; padding: 5px 15px; border-radius: 8px; font-size: 13px; border: 1px solid #ddd;}
 
-    /* CCODE WINDOW */
-    .ccode-win {
-      margin-top: 140px;
-      width: 90%;
-      max-width: 900px;
-      border-radius: 2rem;
-      padding: 2rem;
-      background: rgba(255,255,255,0.05);
-      box-sizing: border-box;
-    }
+        .ccode-body {
+            display: grid; grid-template-columns: 1fr 280px; gap: 15px;
+            padding: 15px; flex-grow: 1; overflow: hidden;
+        }
 
-    .editor {
-      width: 100%;
-      height: 350px;
-      background: rgba(0,0,0,0.2);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 1rem;
-      color: #3FFC6A;
-      padding: 20px;
-      font-family: 'Geist', monospace;
-      font-size: 14px;
-      line-height: 1.5;
-      resize: none;
-      box-sizing: border-box;
-    }
+        .editor-area {
+            background: white; border-radius: 18px; padding: 20px;
+            font-family: 'Consolas', monospace; font-size: 14px;
+            border: none; resize: none; outline: none;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+        }
 
-    .editor:focus {
-      outline: none;
-      border-color: var(--c-action);
-    }
+        .sidebar-panel { display: flex; flex-direction: column; gap: 15px; }
 
-    /* DOCK */
-    .dock {
-      position: fixed;
-      bottom: 30px;
-      display: flex;
-      gap: 15px;
-      padding: 12px 25px;
-      border-radius: 2rem;
-      z-index: 50;
-    }
+        .side-card {
+            background: rgba(255,255,255,0.7);
+            border-radius: 18px; padding: 15px; flex-grow: 1;
+        }
 
-    .icon {
-      width: 55px;
-      height: 55px;
-      background: white;
-      border-radius: 1.2rem;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
-    }
+        .file-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 14px; color: #333; }
+        .icon { width: 24px; height: 24px; background: #eee; border-radius: 5px; }
 
-    .icon:hover {
-      transform: translateY(-15px) scale(1.3);
-    }
+        .output-panel {
+            background: rgba(255,255,255,0.5); height: 120px;
+            border-radius: 18px; padding: 15px; font-size: 12px; color: #666;
+            display: flex; align-items: flex-end; justify-content: center;
+        }
 
-    .icon svg {
-      transition: transform 0.3s;
-    }
-
-    /* VENTRAOS SECTIONS */
-    .ventraos-section {
-      margin-top: 40px;
-      width: 90%;
-      max-width: 900px;
-      border-radius: 2rem;
-      padding: 2rem;
-      background: rgba(255,255,255,0.05);
-      box-sizing: border-box;
-    }
-
-    .ventraos-section h1 {
-      font-family: 'Geist';
-      margin-top: 0;
-      margin-bottom: 1rem;
-      color: var(--c-action);
-      font-size: 2.5rem;
-    }
-
-    .ventraos-section h2 {
-      font-family: 'Geist';
-      color: var(--c-action);
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      font-size: 1.8rem;
-    }
-
-    .ventraos-section h3 {
-      font-family: 'Geist';
-      color: var(--c-action);
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-      font-size: 1.3rem;
-    }
-
-    .ventraos-section p {
-      margin-bottom: 1rem;
-      line-height: 1.6;
-    }
-
-    .ventraos-section ul {
-      padding-left: 20px;
-      margin-bottom: 1.5rem;
-    }
-
-    .ventraos-section li {
-      margin-bottom: 8px;
-      line-height: 1.5;
-    }
-
-    .download-btn {
-      display: inline-block;
-      background-color: var(--c-action);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: bold;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      transition: all 0.2s;
-      opacity: 0.6;
-      cursor: not-allowed;
-      border: none;
-      font-family: 'Geist', sans-serif;
-      font-size: 14px;
-    }
-
-    .download-btn:hover {
-      transform: none;
-      filter: none;
-      opacity: 0.6;
-    }
-
-    .copyright {
-      margin-top: 40px;
-      font-size: 12px;
-      opacity: 0.7;
-      text-align: center;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .release-date {
-      margin-top: 20px;
-      padding: 15px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      font-size: 14px;
-      color: #3FFC6A;
-      font-family: 'Geist', monospace;
-      text-align: center;
-      border: 1px solid rgba(63, 252, 106, 0.3);
-    }
-
-    hr {
-      margin: 30px 0;
-      border: none;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      height: 1px;
-    }
-
-    /* Улучшенная поддержка мобильных устройств */
-    @media (max-width: 768px) {
-      .ccode-win,
-      .ventraos-section {
-        width: 95%;
-        padding: 1.5rem;
-        border-radius: 1.5rem;
-      }
-
-      .switcher {
-        width: 90%;
-        max-width: 300px;
-      }
-
-      .dock {
-        padding: 10px 20px;
-        gap: 10px;
-      }
-
-      .icon {
-        width: 45px;
-        height: 45px;
-      }
-
-      .ventraos-section h1 {
-        font-size: 2rem;
-      }
-
-      .ventraos-section h2 {
-        font-size: 1.5rem;
-      }
-
-      .ventraos-section h3 {
-        font-size: 1.2rem;
-      }
-
-      .editor {
-        height: 250px;
-        font-size: 12px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      body {
-        padding-bottom: 120px;
-      }
-
-      .ccode-win {
-        margin-top: 100px;
-      }
-
-      .ventraos-section {
-        padding: 1rem;
-      }
-
-      .download-btn {
-        padding: 10px 20px;
-        font-size: 13px;
-      }
-    }
-
-    /* Исправление проблем с SVG фильтром */
-    .liquidGlass-wrapper::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: inherit;
-      z-index: -1;
-    }
-
-    /* Улучшение видимости радиокнопок */
-    .switcher__option input:checked + span {
-      position: relative;
-    }
-
-    .switcher__option input:checked + span::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 20px;
-      height: 3px;
-      background: var(--c-action);
-      border-radius: 2px;
-    }
-
-    .switcher__option span {
-      position: relative;
-      display: inline-block;
-      padding-bottom: 5px;
-    }
-  </style>
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
 
-  <div class="switcher liquidGlass-wrapper">
-    <label class="switcher__option">
-      <input type="radio" name="t" value="light" checked>
-      <span>LIGHT</span>
-    </label>
-    <label class="switcher__option">
-      <input type="radio" name="t" value="dark">
-      <span>DARK</span>
-    </label>
-    <label class="switcher__option">
-      <input type="radio" name="t" value="dim">
-      <span>DIM</span>
-    </label>
-  </div>
-
-  <!-- CCODE WINDOW -->
-  <div class="ccode-win liquidGlass-wrapper">
-    <h1 style="margin-bottom: 5px;">CCode IDE</h1>
-    <p style="font-size: 14px; opacity: 0.7; margin-bottom: 20px;">The official environment for Cyc language.</p>
-    
-    <textarea class="editor" spellcheck="false">
-import Ventra
-import UI
-
-start() {
-  UI.createGlassWindow("Main", liquid: true)
-  print("VentraOS initialized with Geist font")
-}
-    </textarea>
-
-    <div style="margin-top: 20px; display: flex; gap: 15px;">
-      <button class="geist-btn"><span>RUN APP</span></button>
-      <button class="geist-btn" style="background-image: linear-gradient(to bottom right, #57C3F9, #591B98);"><span>SAVE</span></button>
+<header>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <div style="background:var(--accent); width:30px; height:30px; border-radius:8px;"></div>
+        <b style="font-size:20px;">VentraOS</b>
     </div>
-  </div>
-
-  <!-- VENTRAOS APPS SECTION -->
-  <div class="ventraos-section liquidGlass-wrapper">
-    <h1>VentraOS</h1>
-    <p>Расширите ваши возможности с помощью приложений для VentraOS.</p>
-    <button class="download-btn">Download is currently not available</button>
-    
-    <hr>
-    
-    <h2>Приложения</h2>
-    
-    <h3>Gemini PP</h3>
-    <p>от Google LLC.</p>
-    <button class="download-btn">Download is currently not available</button>
-    
-    <h3>Zapret Discord и Youtube PP</h3>
-    <p>от VentraTech</p>
-    <button class="download-btn">Download is currently not available</button>
-    
-    <h3>Maincraft PP</h3>
-    <p>от VentraTech</p>
-    <button class="download-btn">Download is currently not available</button>
-    
-    <div class="copyright">
-      © VentraTech — VentraOS создан в WebOS (HTML, CSS, JS, PHP)
+    <div class="nav-links">
+        <button id="btn-home" class="active" onclick="switchPage('home')">Головна</button>
+        <button id="btn-ccode-nav" onclick="switchPage('ccode')">CCode</button>
     </div>
-  </div>
-
-  <!-- VENTRAOS UTILITIES SECTION -->
-  <div class="ventraos-section liquidGlass-wrapper">
-    <h1>VentraOS</h1>
-    <p>Утилиты для операционной системы VentraOS.</p>
-    <button class="download-btn">Download is currently not available</button>
-    
-    <hr>
-    
-    <h2>Утилиты</h2>
-    
-    <h3>CCode 7-X</h3>
-    <p>Создание приложения для VentraOS 7 и выше. Приложение для Windows</p>
-    <button class="download-btn">Download is currently not available</button>
-    
-    <h3>CCode 2-6</h3>
-    <p>Создание приложения для VentraOS 2-6. Приложение для Windows PowerPoint</p>
-    <button class="download-btn">Download is currently not available</button>
-    
-    <div class="release-date">
-      <strong>CCode - full release in 31.02.2026</strong>
+    <div id="user-info">
+        <button onclick="document.getElementById('auth-overlay').classList.remove('hidden')">Увійти</button>
     </div>
-    
-    <div class="copyright">
-      © VentraTech — VentraOS создан в WebOS (HTML, CSS, JS, PHP)
+</header>
+
+<div id="auth-overlay" class="hidden">
+    <div class="auth-card">
+        <h2 id="auth-title">Вхід</h2>
+        <input type="text" id="username" placeholder="Логін">
+        <input type="password" id="password" placeholder="Пароль">
+        <button onclick="handleAuth()">Продовжити</button>
+        <p style="font-size:12px; cursor:pointer; color:var(--accent); margin-top:15px;" onclick="toggleAuthMode()" id="auth-toggle">Немає акаунта? Реєстрація</p>
     </div>
-  </div>
+</div>
 
-  <!-- VENTRAOS SYSTEM REQUIREMENTS -->
-  <div class="ventraos-section liquidGlass-wrapper">
-    <h1>VentraOS</h1>
-    <p>Узнайте, что необходимо для запуска VentraOS на вашем устройстве.</p>
-    <button class="download-btn">Download is currently not available</button>
-    
-    <hr>
-    
-    <h2>Системные требования</h2>
-    
-    <h3>Рекомендуем выбрать</h3>
-    <ul>
-      <li>ОС для запуска: Windows 11 25H2 и выше.</li>
-      <li>Браузер: Google Chrome.</li>
-      <li>Веб-камера: Для работы приложения "Камера" в VentraOS.</li>
-      <li>Процессор с поддержкой VentraAI.</li>
-    </ul>
-    
-    <h3>Минимальные системные требования</h3>
-    <ul>
-      <li>ОС для запуска: Windows 11 21H2 и выше.</li>
-      <li>Браузер: Superium.</li>
-    </ul>
-    
-    <div class="copyright">
-      © VentraTech — VentraOS создан в WebOS (HTML, CSS, JS, PHP)
+<main id="page-home" style="text-align:center; padding-top:100px;">
+    <h1>Ласкаво просимо до VentraOS</h1>
+    <p>Увійдіть, щоб отримати доступ до вашого середовища розробки CCode.</p>
+</main>
+
+<main id="page-ccode">
+    <div class="ccode-container">
+        <div class="ccode-header">
+            <span style="font-size:20px; margin-right:15px;">← →</span>
+            <button class="btn-blue" onclick="saveData()">Сохранить</button>
+            <button class="tab">Отладка</button>
+            <button class="tab">Открыть путь</button>
+            <button class="btn-blue" style="background:#28a745;">Запустить</button>
+            <div style="flex-grow:1"></div>
+            <button class="tab">Настройки</button>
+        </div>
+        <div style="padding-left:15px; display:flex; gap:5px;">
+            <div class="tab" style="border-bottom:none; border-radius:8px 8px 0 0;">mainpage.cyc</div>
+            <div class="tab" style="border-bottom:none; border-radius:8px 8px 0 0; background:rgba(255,255,255,0.4)">maininterface.cui</div>
+        </div>
+        <div class="ccode-body">
+            <textarea id="editor" class="editor-area"></textarea>
+            
+            <div class="sidebar-panel">
+                <div class="side-card">
+                    <b style="display:block; margin-bottom:15px;">Приложения</b>
+                    <div class="file-item"><div class="icon"></div> mainpage.cyc</div>
+                    <div class="file-item"><div class="icon"></div> maininterface.cui</div>
+                    <div class="file-item"><div class="icon"></div> app.coldapp</div>
+                </div>
+                <div class="output-panel">Output</div>
+            </div>
+        </div>
     </div>
-  </div>
+</main>
 
-  <!-- VENTRAOS SCREENSHOTS -->
-  <div class="ventraos-section liquidGlass-wrapper">
-    <h1>VentraOS</h1>
-    <h2>Скриншоты VentraOS</h2>
-    
-    <h3>Просмотреть ещё скриншоты</h3>
-    
-    <h3>Описание о данной системе</h3>
-    <p>VentraOS — Это операционная система для устройств сделанная в WebOS. В красивом дизайне который вам понравиться!</p>
-    <p>И всё это вы можете использовать на вашем компьютере. Прямо сейчас!</p>
-    
-    <button class="download-btn">Посмотреть требования</button>
-    
-    <div class="copyright">
-      © VentraTech — VentraOS создана в WebOS (HTML, CSS, JS, PHP)
-    </div>
-  </div>
+<script>
+    let users = JSON.parse(localStorage.getItem('ventra_users')) || {};
+    let currentUser = localStorage.getItem('ventra_current');
+    let isRegister = false;
 
-  <!-- VENTRAOS FEATURES -->
-  <div class="ventraos-section liquidGlass-wrapper">
-    <h1>VentraOS</h1>
-    <p>Операционная система, сделанная в WebOS. Удивительно красивая и очень функциональная.</p>
-    <button class="download-btn">Download is currently not available</button>
-    
-    <hr>
-    
-    <h2>VentraUI</h2>
-    <p>Дизайн VentraUI - Это единый красивый дизайн с большими возможностями оформления.</p>
-    
-    <h2>VentraAI</h2>
-    <p>VentraAI — Это оффлайн ИИ помощник из коробки в VentraOS, генерируйте запросы легко и просто.</p>
-    
-    <h2>Opix-Браузер</h2>
-    <p>Легкий встроенный браузер в VentraOS — Безусловный способ к простому серфингу по интернету.</p>
-    
-    <h2>Простая установка</h2>
-    <p>Очень удобная, практичная, быстрая установка! VentraOS не требует ничего, кроме браузера и Windows 11.</p>
-    
-    <h2>Многофункциональная</h2>
-    <p>В VentraOS есть скрипты JavaScript, с помощью которых вы можете делать ОЧЕНЬ много всего...</p>
-    
-    <h3>Скриншоты VentraOS</h3>
-  </div>
+    const defaultCode = `import system.var = system\nimport gui.screen = surface\n\nproject(\nuse.maininterface.cui()\nuse.system\n)\n\nint(\nconsole.log-"App Started Secfully"-\nInt.guiscreen = span="TextButton"\nInt.guiscreen = spawn=:"Set a model":\nInt.guiscreen = span:{"Spawn" if click, spawn "3d_cube"}\nconsole.log-"Spawned Secfully!"\n)`;
 
-  <!-- DOCK -->
-  <div class="dock liquidGlass-wrapper">
-    <div class="icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-      </svg>
-    </div>
-    <div class="icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
-      </svg>
-    </div>
-    <div class="icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M12 8v8M8 12h8"/>
-      </svg>
-    </div>
-  </div>
-
-  <svg style="position: fixed; width: 0; height: 0;">
-    <filter id="liquid-glass">
-      <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" result="noise" />
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" />
-    </filter>
-  </svg>
-
-  <script>
-    // Исправление проблем с переключателем тем
-    document.querySelectorAll('.switcher input').forEach(radio => {
-      radio.addEventListener('change', (e) => {
-        // Убираем жидкий стекло эффект на время анимации для предотвращения багов
-        document.body.classList.add('no-liquid-glass');
-        
-        // Анимация смены темы
-        setTimeout(() => {
-          document.body.classList.remove('no-liquid-glass');
-        }, 400);
-      });
-    });
-
-    // Исправление нажатия кнопок в доке
-    document.querySelectorAll('.icon').forEach(icon => {
-      icon.addEventListener('click', (e) => {
-        e.preventDefault();
-        icon.style.transform = 'translateY(-15px) scale(1.3)';
-        setTimeout(() => {
-          icon.style.transform = '';
-        }, 300);
-      });
-    });
-
-    // Предотвращение проблем с textarea
-    const editor = document.querySelector('.editor');
-    if (editor) {
-      editor.addEventListener('focus', () => {
-        editor.parentElement.style.zIndex = '10';
-      });
-      
-      editor.addEventListener('blur', () => {
-        editor.parentElement.style.zIndex = '';
-      });
+    function toggleAuthMode() {
+        isRegister = !isRegister;
+        document.getElementById('auth-title').innerText = isRegister ? "Реєстрація" : "Вхід";
+        document.getElementById('auth-toggle').innerText = isRegister ? "Вже є акаунт? Увійти" : "Немає акаунта? Реєстрація";
     }
 
-    // Исправление для мобильных устройств
-    function handleResize() {
-      if (window.innerWidth < 768) {
-        document.body.style.overflowX = 'hidden';
-      }
+    function handleAuth() {
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+
+        if(!u || !p) return alert("Заповніть усі поля!");
+
+        if(isRegister) {
+            if(users[u]) return alert("Користувач вже існує!");
+            users[u] = { password: p, code: defaultCode };
+            localStorage.setItem('ventra_users', JSON.stringify(users));
+            alert("Акаунт створено!");
+            toggleAuthMode();
+        } else {
+            if(users[u] && users[u].password === p) {
+                currentUser = u;
+                localStorage.setItem('ventra_current', u);
+                initSession();
+            } else {
+                alert("Невірні дані!");
+            }
+        }
     }
 
-    window.addEventListener('resize', handleResize);
-    handleResize();
+    function initSession() {
+        if(!currentUser) return;
+        document.getElementById('auth-overlay').classList.add('hidden');
+        document.getElementById('user-info').innerHTML = `<span>${currentUser}</span> <button onclick="logout()">Вихід</button>`;
+        document.getElementById('editor').value = users[currentUser].code;
+        switchPage('ccode');
+    }
 
-    // Предотвращение двойного нажатия на кнопки
-    document.querySelectorAll('button').forEach(button => {
-      button.addEventListener('click', function(e) {
-        if (this.disabled) return;
+    function logout() {
+        localStorage.removeItem('ventra_current');
+        location.reload();
+    }
+
+    function switchPage(page) {
+        if(page === 'ccode' && !currentUser) {
+            document.getElementById('auth-overlay').classList.remove('hidden');
+            return;
+        }
+        document.getElementById('page-home').style.display = (page === 'home') ? 'block' : 'none';
+        document.getElementById('page-ccode').style.display = (page === 'ccode') ? 'block' : 'none';
         
-        this.disabled = true;
-        setTimeout(() => {
-          this.disabled = false;
-        }, 1000);
-      });
-    });
-  </script>
+        document.getElementById('btn-home').classList.toggle('active', page === 'home');
+        document.getElementById('btn-ccode-nav').classList.toggle('active', page === 'ccode');
+    }
+
+    function saveData() {
+        if(!currentUser) return;
+        users[currentUser].code = document.getElementById('editor').value;
+        localStorage.setItem('ventra_users', JSON.stringify(users));
+        alert("Дані збережені в системі!");
+    }
+
+    // При завантаженні перевіряємо чи є сесія
+    if(currentUser) initSession();
+</script>
 
 </body>
 </html>
